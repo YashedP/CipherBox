@@ -6,13 +6,19 @@ function MainWindow() {
   const [inputText, setInputText] = useState('')
   const [outputText, setOutputText] = useState('')
 
+  const handleInputChange = (text: string) => {
+    setInputText(text)
+    // const transformedText = transformText(text)
+    setOutputText(text)
+  }
+
   return (
     <div className="h-screen w-screen flex flex-col md:flex-row">
       <LeftPanel />
       <RightPanel 
         inputText={inputText}
         outputText={outputText}
-        onInputChange={setInputText}
+        onInputChange={handleInputChange}
       />
     </div>
   )
