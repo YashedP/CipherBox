@@ -16,9 +16,9 @@ function RightPanel({ inputText, outputText, onInputChange }: RightPanelProps) {
             <label className="block text-sm font-bold text-center text-gray-700">
               Input
             </label>
-            <Textarea 
+            <Textarea
               className="w-full flex-1 resize-none rounded-none border border-gray-200"
-              placeholder="Input text here..." 
+              placeholder="Input text here..."
               value={inputText}
               onChange={(e) => onInputChange(e.target.value)}
             />
@@ -32,10 +32,10 @@ function RightPanel({ inputText, outputText, onInputChange }: RightPanelProps) {
             <label className="block text-sm font-bold text-center text-gray-700">
               Output
             </label>
-            <Textarea 
-              className="w-full flex-1 resize-none bg-muted rounded-none border border-gray-200 select-text" 
-              readOnly 
-              placeholder="Output will appear here..." 
+            <Textarea
+              className="w-full flex-1 resize-none bg-muted rounded-none border border-gray-200 select-text"
+              readOnly
+              placeholder="Output will appear here..."
               value={outputText}
             />
           </div>
@@ -46,4 +46,3 @@ function RightPanel({ inputText, outputText, onInputChange }: RightPanelProps) {
 }
 
 export default RightPanel
-
