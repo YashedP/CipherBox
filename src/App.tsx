@@ -1,14 +1,8 @@
 import './App.css'
-import LeftPanel from '@/components/LeftPanel'
-import RightPanel from '@/components/RightPanel'
+import MainWindow from '@/components/MainWindow'
 
 function App() {
-  return (
-    <div className="h-screen w-screen flex flex-col md:flex-row">
-      <LeftPanel />
-      <RightPanel />
-    </div>
-  )
+  return <MainWindow />
 }
 
 export default App
