@@ -1,0 +1,478 @@
+[
+    {
+        "name": "MD5",
+        "category": "hash",
+        "slug": "md5",
+        "description": "Fast but broken (collisions). OK for non-security checksums only.",
+        "url": "https://en.wikipedia.org/wiki/MD5"
+    },
+    {
+        "name": "MD4",
+        "category": "hash",
+        "slug": "md4",
+        "description": "Older than MD5 and insecure; academic interest only.",
+        "url": "https://en.wikipedia.org/wiki/MD4"
+    },
+    {
+        "name": "SHA-1",
+        "category": "hash",
+        "slug": "sha1",
+        "description": "160-bit hash now deprecated due to practical collisions.",
+        "url": "https://csrc.nist.gov/projects/hash-functions/sha-1"
+    },
+    {
+        "name": "SHA-224",
+        "category": "hash",
+        "slug": "sha224",
+        "description": "Truncated SHA-256; useful when a shorter digest is needed.",
+        "url": "https://csrc.nist.gov/publications/detail/fips/180/4/final"
+    },
+    {
+        "name": "SHA-256",
+        "category": "hash",
+        "slug": "sha256",
+        "description": "Widely used 256-bit hash from the SHA-2 family.",
+        "url": "https://csrc.nist.gov/publications/detail/fips/180/4/final"
+    },
+    {
+        "name": "SHA-384",
+        "category": "hash",
+        "slug": "sha384",
+        "description": "384-bit output; based on SHA-512 with truncation.",
+        "url": "https://csrc.nist.gov/publications/detail/fips/180/4/final"
+    },
+    {
+        "name": "SHA-512",
+        "category": "hash",
+        "slug": "sha512",
+        "description": "512-bit output; performs well on 64-bit CPUs.",
+        "url": "https://csrc.nist.gov/publications/detail/fips/180/4/final"
+    },
+    {
+        "name": "SHA-512/224",
+        "category": "hash",
+        "slug": "sha512-224",
+        "description": "SHA-512 with 224-bit truncation; niche use.",
+        "url": "https://csrc.nist.gov/publications/detail/fips/180/4/final"
+    },
+    {
+        "name": "SHA-512/256",
+        "category": "hash",
+        "slug": "sha512-256",
+        "description": "SHA-512 with 256-bit truncation; drop-in alt to SHA-256.",
+        "url": "https://csrc.nist.gov/publications/detail/fips/180/4/final"
+    },
+    {
+        "name": "SHA3-224",
+        "category": "hash",
+        "slug": "sha3-224",
+        "description": "Keccak-based, sponge construction; 224-bit digest.",
+        "url": "https://csrc.nist.gov/publications/detail/fips/202/final"
+    },
+    {
+        "name": "SHA3-256",
+        "category": "hash",
+        "slug": "sha3-256",
+        "description": "Keccak; modern alternative to SHA-2 with different design.",
+        "url": "https://csrc.nist.gov/publications/detail/fips/202/final"
+    },
+    {
+        "name": "SHA3-384",
+        "category": "hash",
+        "slug": "sha3-384",
+        "description": "Keccak; larger output for higher collision resistance.",
+        "url": "https://csrc.nist.gov/publications/detail/fips/202/final"
+    },
+    {
+        "name": "SHA3-512",
+        "category": "hash",
+        "slug": "sha3-512",
+        "description": "Keccak; 512-bit digest; conservative choice.",
+        "url": "https://csrc.nist.gov/publications/detail/fips/202/final"
+    },
+    {
+        "name": "SHAKE128",
+        "category": "hash",
+        "slug": "shake128",
+        "description": "XOF (extensible-output); you choose the output length.",
+        "url": "https://csrc.nist.gov/publications/detail/fips/202/final"
+    },
+    {
+        "name": "SHAKE256",
+        "category": "hash",
+        "slug": "shake256",
+        "description": "Stronger XOF variant; choose any output size.",
+        "url": "https://csrc.nist.gov/publications/detail/fips/202/final"
+    },
+    {
+        "name": "BLAKE2s",
+        "category": "hash",
+        "slug": "blake2s",
+        "description": "Secure, very fast; supports keyed MAC, salt, personalization.",
+        "url": "https://blake2.net/"
+    },
+    {
+        "name": "BLAKE2b",
+        "category": "hash",
+        "slug": "blake2b",
+        "description": "64-bit-optimized sibling of BLAKE2s; common in file hashing.",
+        "url": "https://blake2.net/"
+    },
+    {
+        "name": "BLAKE3",
+        "category": "hash",
+        "slug": "blake3",
+        "description": "Modern, tree-hashed; extremely fast with parallelism and key derivation mode.",
+        "url": "https://github.com/BLAKE3-team/BLAKE3"
+    },
+    {
+        "name": "RIPEMD-160",
+        "category": "hash",
+        "slug": "ripemd160",
+        "description": "160-bit hash; seen in Bitcoin address pipelines (with SHA-256).",
+        "url": "https://en.wikipedia.org/wiki/RIPEMD"
+    },
+    {
+        "name": "Whirlpool",
+        "category": "hash",
+        "slug": "whirlpool",
+        "description": "512-bit hash designed by Rijmen/Barreto; less common today.",
+        "url": "https://en.wikipedia.org/wiki/Whirlpool_(hash_function)"
+    },
+    {
+        "name": "Tiger",
+        "category": "hash",
+        "slug": "tiger",
+        "description": "192-bit hash optimized for 64-bit CPUs; legacy usage.",
+        "url": "https://en.wikipedia.org/wiki/Tiger_(cryptography)"
+    },
+    {
+        "name": "Snefru",
+        "category": "hash",
+        "slug": "snefru",
+        "description": "Early hash function by Ralph Merkle; mainly historical.",
+        "url": "https://en.wikipedia.org/wiki/Snefru"
+    },
+    {
+        "name": "CRC32",
+        "category": "checksum",
+        "slug": "crc32",
+        "description": "Error-detecting checksum (ZIP, PNG); not for security.",
+        "url": "https://en.wikipedia.org/wiki/Cyclic_redundancy_check"
+    },
+    {
+        "name": "CRC64",
+        "category": "checksum",
+        "slug": "crc64",
+        "description": "64-bit CRC variants (e.g., ECMA-182) for larger data streams.",
+        "url": "https://en.wikipedia.org/wiki/Cyclic_redundancy_check"
+    },
+    {
+        "name": "Adler-32",
+        "category": "checksum",
+        "slug": "adler32",
+        "description": "Simple checksum (zlib); faster than CRC but weaker detection.",
+        "url": "https://en.wikipedia.org/wiki/Adler-32"
+    },
+    {
+        "name": "MurmurHash3",
+        "category": "checksum",
+        "slug": "murmurhash3",
+        "description": "Fast non-crypto hash for hash tables (32/128-bit).",
+        "url": "https://en.wikipedia.org/wiki/MurmurHash"
+    },
+    {
+        "name": "xxHash",
+        "category": "checksum",
+        "slug": "xxhash",
+        "description": "Extremely fast non-crypto hashing; great for checksums.",
+        "url": "https://cyan4973.github.io/xxHash/"
+    },
+    {
+        "name": "CityHash / FarmHash",
+        "category": "checksum",
+        "slug": "cityhash-farmhash",
+        "description": "Google’s fast non-crypto hash family for strings.",
+        "url": "https://en.wikipedia.org/wiki/CityHash"
+    },
+    {
+        "name": "AES-CBC",
+        "category": "symmetric",
+        "slug": "aes-cbc",
+        "description": "AES in CBC mode; needs key + IV + padding; no integrity by itself.",
+        "url": "https://csrc.nist.gov/publications/detail/sp/800-38a/final"
+    },
+    {
+        "name": "AES-CTR",
+        "category": "symmetric",
+        "slug": "aes-ctr",
+        "description": "AES in counter mode; turns AES into a stream cipher; needs nonce.",
+        "url": "https://csrc.nist.gov/publications/detail/sp/800-38a/final"
+    },
+    {
+        "name": "AES-GCM",
+        "category": "symmetric",
+        "slug": "aes-gcm",
+        "description": "AEAD mode (encrypt + authenticate); needs key, nonce, optional AAD.",
+        "url": "https://csrc.nist.gov/publications/detail/sp/800-38d/final"
+    },
+    {
+        "name": "AES-CCM",
+        "category": "symmetric",
+        "slug": "aes-ccm",
+        "description": "AEAD mode for constrained devices; tradeoffs vs GCM.",
+        "url": "https://csrc.nist.gov/publications/detail/sp/800-38c/final"
+    },
+    {
+        "name": "ChaCha20",
+        "category": "symmetric",
+        "slug": "chacha20",
+        "description": "High-speed stream cipher; robust and fast on all CPUs.",
+        "url": "https://www.rfc-editor.org/rfc/rfc8439"
+    },
+    {
+        "name": "ChaCha20-Poly1305",
+        "category": "symmetric",
+        "slug": "chacha20-poly1305",
+        "description": "AEAD mode combining ChaCha20 with Poly1305 MAC; TLS 1.3 standard.",
+        "url": "https://www.rfc-editor.org/rfc/rfc8439"
+    },
+    {
+        "name": "3DES",
+        "category": "symmetric",
+        "slug": "3des",
+        "description": "Triple DES; legacy and insecure; phased out.",
+        "url": "https://csrc.nist.gov/publications/detail/sp/800-67/rev-2/final"
+    },
+    {
+        "name": "Blowfish",
+        "category": "symmetric",
+        "slug": "blowfish",
+        "description": "64-bit block cipher; legacy due to small block size.",
+        "url": "https://en.wikipedia.org/wiki/Blowfish_(cipher)"
+    },
+    {
+        "name": "Twofish",
+        "category": "symmetric",
+        "slug": "twofish",
+        "description": "AES finalist; 128-bit block cipher; solid security but less common.",
+        "url": "https://en.wikipedia.org/wiki/Twofish"
+    },
+    {
+        "name": "Serpent",
+        "category": "symmetric",
+        "slug": "serpent",
+        "description": "AES finalist; very conservative security margin; slower.",
+        "url": "https://en.wikipedia.org/wiki/Serpent_(cipher)"
+    },
+    {
+        "name": "Camellia",
+        "category": "symmetric",
+        "slug": "camellia",
+        "description": "Japanese cipher with AES-like properties; standardized internationally.",
+        "url": "https://en.wikipedia.org/wiki/Camellia_(cipher)"
+    },
+    {
+        "name": "IDEA",
+        "category": "symmetric",
+        "slug": "idea",
+        "description": "64-bit block cipher; used in early PGP; now mostly legacy.",
+        "url": "https://en.wikipedia.org/wiki/International_Data_Encryption_Algorithm"
+    },
+    {
+        "name": "RSA-OAEP",
+        "category": "public-key",
+        "slug": "rsa-oaep",
+        "description": "RSA encryption with OAEP padding for semantic security.",
+        "url": "https://www.rfc-editor.org/rfc/rfc8017"
+    },
+    {
+        "name": "RSA-PSS",
+        "category": "public-key",
+        "slug": "rsa-pss",
+        "description": "RSA signature scheme with randomized padding; recommended over PKCS#1 v1.5.",
+        "url": "https://www.rfc-editor.org/rfc/rfc8017"
+    },
+    {
+        "name": "ECDSA",
+        "category": "public-key",
+        "slug": "ecdsa",
+        "description": "Elliptic-curve digital signature algorithm; widely used with curves like P-256.",
+        "url": "https://csrc.nist.gov/publications/detail/fips/186/4/final"
+    },
+    {
+        "name": "Ed25519",
+        "category": "public-key",
+        "slug": "ed25519",
+        "description": "Modern elliptic curve signature on Curve25519; fast, deterministic, and secure.",
+        "url": "https://www.rfc-editor.org/rfc/rfc8032"
+    },
+    {
+        "name": "Ed448",
+        "category": "public-key",
+        "slug": "ed448",
+        "description": "Larger EdDSA elliptic curve signature scheme; higher security margin.",
+        "url": "https://www.rfc-editor.org/rfc/rfc8032"
+    },
+    {
+        "name": "X25519",
+        "category": "public-key",
+        "slug": "x25519",
+        "description": "Key agreement scheme using Curve25519; used in TLS 1.3 and modern protocols.",
+        "url": "https://www.rfc-editor.org/rfc/rfc7748"
+    },
+    {
+        "name": "X448",
+        "category": "public-key",
+        "slug": "x448",
+        "description": "Key agreement scheme using Curve448; larger keys for higher security.",
+        "url": "https://www.rfc-editor.org/rfc/rfc7748"
+    },
+    {
+        "name": "ElGamal",
+        "category": "public-key",
+        "slug": "elgamal",
+        "description": "Probabilistic public-key encryption scheme; mainly of historical and academic interest.",
+        "url": "https://en.wikipedia.org/wiki/ElGamal_encryption"
+    },
+    {
+        "name": "PBKDF2",
+        "category": "kdf",
+        "slug": "pbkdf2",
+        "description": "Password-based key derivation with salt and configurable iterations; widely supported.",
+        "url": "https://www.rfc-editor.org/rfc/rfc8018"
+    },
+    {
+        "name": "scrypt",
+        "category": "kdf",
+        "slug": "scrypt",
+        "description": "Memory-hard password hashing function; resistant to GPU/ASIC cracking.",
+        "url": "https://www.rfc-editor.org/rfc/rfc7914"
+    },
+    {
+        "name": "bcrypt",
+        "category": "kdf",
+        "slug": "bcrypt",
+        "description": "Password hashing function with adaptive cost factor; stores salt and cost in output.",
+        "url": "https://en.wikipedia.org/wiki/Bcrypt"
+    },
+    {
+        "name": "Argon2id",
+        "category": "kdf",
+        "slug": "argon2id",
+        "description": "Winner of the Password Hashing Competition; memory-hard and side-channel resistant.",
+        "url": "https://www.rfc-editor.org/rfc/rfc9106"
+    },
+    {
+        "name": "HKDF",
+        "category": "kdf",
+        "slug": "hkdf",
+        "description": "HMAC-based key derivation (extract-then-expand) with optional salt and info parameters.",
+        "url": "https://www.rfc-editor.org/rfc/rfc5869"
+    },
+    {
+        "name": "HMAC",
+        "category": "mac",
+        "slug": "hmac",
+        "description": "Keyed-hash message authentication code using secure hash functions like SHA-256.",
+        "url": "https://www.rfc-editor.org/rfc/rfc2104"
+    },
+    {
+        "name": "CMAC",
+        "category": "mac",
+        "slug": "cmac",
+        "description": "Cipher-based message authentication code standardized by NIST; often used with AES.",
+        "url": "https://csrc.nist.gov/publications/detail/sp/800-38b/final"
+    },
+    {
+        "name": "Base64",
+        "category": "encoding",
+        "slug": "base64",
+        "description": "Binary-to-text encoding; widely used for data transport and embedding.",
+        "url": "https://www.rfc-editor.org/rfc/rfc4648"
+    },
+    {
+        "name": "Base32",
+        "category": "encoding",
+        "slug": "base32",
+        "description": "Text encoding with case-insensitivity and limited alphabet; useful for URLs.",
+        "url": "https://www.rfc-editor.org/rfc/rfc4648"
+    },
+    {
+        "name": "Hex",
+        "category": "encoding",
+        "slug": "hex",
+        "description": "ASCII ↔ hexadecimal string conversion; widely used for debugging and representation.",
+        "url": "https://en.wikipedia.org/wiki/Hexadecimal"
+    },
+    {
+        "name": "URL Encode",
+        "category": "encoding",
+        "slug": "url-encode",
+        "description": "Percent-encode reserved characters for safe use in URIs.",
+        "url": "https://www.rfc-editor.org/rfc/rfc3986"
+    },
+    {
+        "name": "Unicode Normalize",
+        "category": "encoding",
+        "slug": "unicode-normalize",
+        "description": "Convert and normalize between UTF-8/16/32 using NFC, NFD, NFKC, or NFKD forms.",
+        "url": "https://unicode.org/reports/tr15/"
+    },
+    {
+        "name": "Binary ↔ Text",
+        "category": "encoding",
+        "slug": "binary-text",
+        "description": "Represent bytes as binary bit strings or decode binary strings back to text.",
+        "url": "https://en.wikipedia.org/wiki/Binary_number"
+    },
+    {
+        "name": "ROT13",
+        "category": "classical",
+        "slug": "rot13",
+        "description": "Simple Caesar shift cipher that rotates letters by 13; used for light obfuscation.",
+        "url": "https://en.wikipedia.org/wiki/ROT13"
+    },
+    {
+        "name": "Vigenere Cipher",
+        "category": "classical",
+        "slug": "vigenere",
+        "description": "Historical polyalphabetic cipher using a repeating key; cryptographically broken but educational.",
+        "url": "https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher"
+    },
+    {
+        "name": "XOR Cipher",
+        "category": "classical",
+        "slug": "xor-cipher",
+        "description": "Toy cipher that XORs plaintext with a key; insecure but useful for demonstrations.",
+        "url": "https://en.wikipedia.org/wiki/XOR_cipher"
+    },
+    {
+        "name": "Endian Swap",
+        "category": "utility",
+        "slug": "endian-swap",
+        "description": "Convert integers between little-endian and big-endian byte orders.",
+        "url": "https://en.wikipedia.org/wiki/Endianness"
+    },
+    {
+        "name": "Luhn Checksum",
+        "category": "utility",
+        "slug": "luhn",
+        "description": "Mod-10 checksum used in credit card numbers and other identifiers.",
+        "url": "https://en.wikipedia.org/wiki/Luhn_algorithm"
+    },
+    {
+        "name": "UUID v4/v5",
+        "category": "utility",
+        "slug": "uuid",
+        "description": "Universally unique identifiers: random v4 or name-based v5 using SHA-1.",
+        "url": "https://www.rfc-editor.org/rfc/rfc4122"
+    },
+    {
+        "name": "Case Transform & Normalize",
+        "category": "utility",
+        "slug": "case-normalize",
+        "description": "Convert text to upper/lower/case-fold and standardize whitespace or line endings.",
+        "url": "https://en.wikipedia.org/wiki/Case_folding"
+    }
+]
