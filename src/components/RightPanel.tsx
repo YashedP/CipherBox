@@ -11,14 +11,11 @@ function RightPanel({ inputText, outputText, onInputChange }: RightPanelProps) {
   return (
     <div className="w-full md:w-1/2 h-full">
       <ResizablePanelGroup direction="vertical" className="h-full">
-        <ResizablePanel defaultSize={50}>
-          <div className="h-full p-2 flex flex-col">
-            <label className="block text-sm font-bold text-center text-gray-700">
-              Input
-            </label>
+        <ResizablePanel defaultSize={50} minSize={20}>
+          <div className="h-full p-2 bg-white">
             <Textarea
-              className="w-full flex-1 resize-none rounded-none border border-gray-200"
-              placeholder="Input text here..."
+              className="w-full h-full resize-none rounded-none border border-gray-200 bg-gray-50"
+              placeholder="Enter your text here..."
               value={inputText}
               onChange={(e) => onInputChange(e.target.value)}
             />
@@ -27,15 +24,12 @@ function RightPanel({ inputText, outputText, onInputChange }: RightPanelProps) {
 
         <ResizableHandle withHandle tabIndex={-1} />
 
-        <ResizablePanel defaultSize={50}>
-          <div className="h-full p-2 flex flex-col">
-            <label className="block text-sm font-bold text-center text-gray-700">
-              Output
-            </label>
+        <ResizablePanel defaultSize={50} minSize={20}>
+          <div className="h-full p-2 bg-white">
             <Textarea
-              className="w-full flex-1 resize-none bg-muted rounded-none border border-gray-200 select-text"
+              className="w-full h-full resize-none bg-muted rounded-none border border-gray-200 select-text"
               readOnly
-              placeholder="Output will appear here..."
+              placeholder="Transformed text will appear here..."
               value={outputText}
             />
           </div>
