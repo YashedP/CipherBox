@@ -18,6 +18,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Settings } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface LeftPanelProps {
   selectedTransformation: TransformationType
@@ -94,7 +95,10 @@ function LeftPanel({ selectedTransformation, onTransformationChange }: LeftPanel
                         <Button variant="outline" onClick={() => setCaesarDialogOpen(false)}>
                           Cancel
                         </Button>
-                        <Button onClick={() => setCaesarDialogOpen(false)}>
+                        <Button onClick={() => {
+                          setCaesarDialogOpen(false)
+                          toast.success("Settings saved!")
+                        }}>
                           Apply Settings
                         </Button>
                       </DialogFooter>
@@ -156,7 +160,10 @@ function LeftPanel({ selectedTransformation, onTransformationChange }: LeftPanel
                         <Button variant="outline" onClick={() => setBase64DialogOpen(false)}>
                           Cancel
                         </Button>
-                        <Button onClick={() => setBase64DialogOpen(false)}>
+                        <Button onClick={() => {
+                          setBase64DialogOpen(false)
+                          toast.success("Settings saved!")
+                        }}>
                           Apply Settings
                         </Button>
                       </DialogFooter>
@@ -234,7 +241,10 @@ function LeftPanel({ selectedTransformation, onTransformationChange }: LeftPanel
                         <Button variant="outline" onClick={() => setHexDialogOpen(false)}>
                           Cancel
                         </Button>
-                        <Button onClick={() => setHexDialogOpen(false)}>
+                        <Button onClick={() => {
+                          setHexDialogOpen(false)
+                          toast.success("Settings saved!")
+                        }}>
                           Apply Settings
                         </Button>
                       </DialogFooter>

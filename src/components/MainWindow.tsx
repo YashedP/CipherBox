@@ -3,6 +3,7 @@ import LeftPanel from './LeftPanel'
 import RightPanel from './RightPanel'
 import { transformText, TransformationType, type TransformOptions } from '@/lib/transformationFunctions'
 import Header from './Header'
+import { Toaster } from '@/components/ui/sonner'
 
 function MainWindow() {
   const [inputText, setInputText] = useState('')
@@ -32,6 +33,7 @@ function MainWindow() {
           onInputChange={handleInputChange}
         />
       </div>
+      <Toaster />
     </div>
   )
 }
