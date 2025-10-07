@@ -7,7 +7,7 @@ function Header() {
           <h1 className="text-gray-800" style={{ fontFamily: 'Montserrat', fontWeight: 400, fontSize: '56px' }}>CIPHERBOX</h1>
         </div>
         <div className="flex items-center gap-3">
-          <h1 className="font-bold text-gray-800" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '16px', transform: 'skew(-10deg)' }}>By Yash Jani and Daniel Acosta</h1>
+          <h1 className="font-bold text-gray-800" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '16px', transform: 'skew(-10deg)' }}>By Yash Jani & Daniel Acosta</h1>
           <img src="/src/assets/heart.svg" alt="Logo" width={24} height={24} />
         </div>
       </div>
