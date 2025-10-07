@@ -2,6 +2,7 @@ import { useState } from 'react'
 import LeftPanel from './LeftPanel'
 import RightPanel from './RightPanel'
 import { transformText, TransformationType, type TransformOptions } from '@/lib/transformationFunctions'
+import Header from './Header'
 
 function MainWindow() {
   const [inputText, setInputText] = useState('')
@@ -16,19 +17,25 @@ function MainWindow() {
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col md:flex-row">
-      <LeftPanel
-        selectedTransformation={selectedTransformation}
-        onTransformationChange={setSelectedTransformation}
-        options={options}
-        onOptionsChange={setOptions}
-      />
-      <RightPanel
-        inputText={inputText}
-        outputText={outputText}
-        onInputChange={handleInputChange}
-      />
-    </div>
+    <>
+      <div>
+        <Header />
+      </div>
+      <div className="h-screen w-screen flex flex-col md:flex-row">
+        <LeftPanel
+          selectedTransformation={selectedTransformation}
+          onTransformationChange={setSelectedTransformation}
+          options={options}
+          onOptionsChange={setOptions}
+        />
+        <RightPanel
+          inputText={inputText}
+          outputText={outputText}
+          onInputChange={handleInputChange}
+        />
+      </div>
+
+    </>
   )
 }
 
