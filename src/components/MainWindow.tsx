@@ -17,11 +17,9 @@ function MainWindow() {
   }
 
   return (
-    <>
-      <div>
-        <Header />
-      </div>
-      <div className="h-screen w-screen flex flex-col md:flex-row">
+    <div className="h-screen w-screen flex flex-col">
+      <Header />
+      <div className="flex-1 flex flex-col md:flex-row">
         <LeftPanel
           selectedTransformation={selectedTransformation}
           onTransformationChange={setSelectedTransformation}
@@ -34,8 +32,7 @@ function MainWindow() {
           onInputChange={handleInputChange}
         />
       </div>
-
-    </>
+    </div>
   )
 }
 

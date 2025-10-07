@@ -9,7 +9,7 @@ interface RightPanelProps {
 
 function RightPanel({ inputText, outputText, onInputChange }: RightPanelProps) {
   return (
-    <div className="w-full md:w-1/2 h-1/2 md:h-full">
+    <div className="w-full md:w-1/2 h-full">
       <ResizablePanelGroup direction="vertical" className="h-full">
         <ResizablePanel defaultSize={50}>
           <div className="h-full p-2 flex flex-col">
