@@ -35,7 +35,10 @@ function LeftPanel({ selectedTransformation, onTransformationChange }: LeftPanel
       <div className="space-y-6">
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="transformations">
-            <AccordionTrigger className="text-[32px] hover:bg-gray-100 hover:text-gray-800 transition-all duration-200">Transformations</AccordionTrigger>
+            <AccordionTrigger className="text-[32px] hover:bg-gray-100 hover:text-gray-800 transition-all duration-200 relative">
+              Transformations
+              <div className="absolute bottom-4 left-0 right-0 h-px bg-gray-300"></div>
+            </AccordionTrigger>
             <AccordionContent>
               <div className="flex flex-wrap gap-2">
                 <ButtonGroup className="flex-1 min-w-0">
