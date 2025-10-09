@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { TransformationType, type TransformOptions } from '@/lib/transformationFunctions'
+import { TransformationType } from '@/lib/transformationFunctions'
+import { type TransformDefaultOptions } from "@/lib/defaultTransformationOptions"
 import { Button } from '@/components/ui/button'
 import { ButtonGroup } from '@/components/ui/button-group'
 import {
@@ -23,11 +24,11 @@ import { toast } from 'sonner'
 interface LeftPanelProps {
   selectedTransformation: TransformationType
   onTransformationChange: (transformation: TransformationType) => void
-  options: TransformOptions<TransformationType>
-  onOptionsChange: (options: TransformOptions<TransformationType>) => void
+  options: TransformDefaultOptions
+  onOptionsChange: (options: TransformDefaultOptions) => void
 }
 
-function LeftPanel({ selectedTransformation, onTransformationChange }: LeftPanelProps) {
+function LeftPanel({ selectedTransformation, onTransformationChange, options, onOptionsChange }: LeftPanelProps) {
   const [caesarDialogOpen, setCaesarDialogOpen] = useState(false)
   const [base64DialogOpen, setBase64DialogOpen] = useState(false)
   const [hexDialogOpen, setHexDialogOpen] = useState(false)
@@ -76,7 +77,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange }: LeftPanel
                             type="number"
                             min="1"
                             max="25"
-                            defaultValue="3"
+                            defaultValue={options[TransformationType.CAESAR].shift || 3}
                             className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           />
                         </div>
@@ -96,6 +97,13 @@ function LeftPanel({ selectedTransformation, onTransformationChange }: LeftPanel
                           Cancel
                         </Button>
                         <Button onClick={() => {
+                          const shiftInput = document.getElementById('shift') as HTMLInputElement
+                          const shiftValue = parseInt(shiftInput.value) || 3
+                          
+                          onOptionsChange({
+                            ...options,
+                            [TransformationType.CAESAR]: { shift: shiftValue }
+                          })
                           setCaesarDialogOpen(false)
                           toast.success("Settings saved!")
                         }}>
