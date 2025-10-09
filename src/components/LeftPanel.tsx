@@ -51,7 +51,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
   return (
     <div className="w-full md:w-1/2 h-full bg-gray-50 p-6 overflow-y-auto">
       <div className="space-y-6">
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion type="multiple" className="w-full" defaultValue={["transformations"]}>
           <AccordionItem value="transformations">
             <AccordionTrigger className="text-[32px] hover:bg-gray-100 hover:text-gray-800 transition-all duration-200 relative">
               Transformations
