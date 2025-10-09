@@ -31,6 +31,11 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
   const [caesarDialogOpen, setCaesarDialogOpen] = useState(false)
   const [base64DialogOpen, setBase64DialogOpen] = useState(false)
   const [hexDialogOpen, setHexDialogOpen] = useState(false)
+  
+  const [caesarForm, setCaesarForm] = useState({
+    shift: options[TransformationType.CAESAR].shift,
+    customAlphabet: options[TransformationType.CAESAR].customAlphabet
+  })
   return (
     <div className="w-full md:w-1/2 h-full bg-gray-50 p-6 overflow-y-auto">
       <div className="space-y-6">
@@ -50,7 +55,15 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                   >
                     Caesar Cipher
                   </Button>
-                  <Dialog open={caesarDialogOpen} onOpenChange={setCaesarDialogOpen}>
+                  <Dialog open={caesarDialogOpen} onOpenChange={(open) => {
+                    setCaesarDialogOpen(open)
+                    if (open) {
+                      setCaesarForm({
+                        shift: options[TransformationType.CAESAR].shift,
+                        customAlphabet: options[TransformationType.CAESAR].customAlphabet
+                      })
+                    }
+                  }}>
                     <DialogTrigger asChild>
                       <Button
                         variant={selectedTransformation === TransformationType.CAESAR ? "default" : "outline"}
@@ -76,7 +89,8 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                             type="number"
                             min="1"
                             max="25"
-                            defaultValue={options[TransformationType.CAESAR].shift || 3}
+                            value={caesarForm.shift}
+                            onChange={(e) => setCaesarForm(prev => ({ ...prev, shift: parseInt(e.target.value)}))}
                             className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           />
                         </div>
@@ -87,6 +101,8 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                           <textarea
                             id="custom-alphabet"
                             placeholder="Enter custom alphabet (optional)"
+                            value={caesarForm.customAlphabet}
+                            onChange={(e) => setCaesarForm(prev => ({ ...prev, customAlphabet: e.target.value }))}
                             className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[80px]"
                           />
                         </div>
@@ -96,12 +112,22 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                           Cancel
                         </Button>
                         <Button onClick={() => {
-                          const shiftInput = document.getElementById('shift') as HTMLInputElement
-                          const shiftValue = parseInt(shiftInput.value) || 3
+                          if (!caesarForm.shift) {
+                            toast.error("Shift value is required")
+                            return
+                          }
+                          
+                          if (caesarForm.shift > 25) {
+                            toast.error("Shift value must be less than 25")
+                            return
+                          }
                           
                           onOptionsChange({
                             ...options,
-                            [TransformationType.CAESAR]: { shift: shiftValue }
+                            [TransformationType.CAESAR]: {
+                              shift: caesarForm.shift,
+                              customAlphabet: caesarForm.customAlphabet
+                            }
                           })
                           setCaesarDialogOpen(false)
                           toast.success("Settings saved!")

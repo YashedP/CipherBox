@@ -2,7 +2,10 @@ import { TransformationType, type TransformOptionsMap } from "./transformationFu
 
 export const defaultTransformationOptions: TransformOptionsMap = {
     [TransformationType.NO_TRANSFORMATION]: {},
-    [TransformationType.CAESAR]: { shift: 3, customAlphabet: "abcdefghijklmnopqrstuvwxyz" },
+    [TransformationType.CAESAR]: { 
+        shift: 3, 
+        customAlphabet: ""
+    },
     [TransformationType.BASE64]: {},
     [TransformationType.HEX]: {},
 }
