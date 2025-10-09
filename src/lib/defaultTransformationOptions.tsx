@@ -6,6 +6,14 @@ export const defaultTransformationOptions: TransformOptionsMap = {
         shift: 3, 
         customAlphabet: ""
     },
-    [TransformationType.BASE64]: {},
-    [TransformationType.HEX]: {},
+    [TransformationType.BASE64]: {
+        urlSafe: false,
+        padding: true,
+        customCharset: ""
+    },
+    [TransformationType.HEX]: {
+        format: 'lowercase',
+        separator: ' ',
+        prefix: '0x'
+    },
 }

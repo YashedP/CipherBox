@@ -36,6 +36,18 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
     shift: options[TransformationType.CAESAR].shift,
     customAlphabet: options[TransformationType.CAESAR].customAlphabet
   })
+  
+  const [base64Form, setBase64Form] = useState({
+    urlSafe: options[TransformationType.BASE64].urlSafe,
+    padding: options[TransformationType.BASE64].padding,
+    customCharset: options[TransformationType.BASE64].customCharset
+  })
+  
+  const [hexForm, setHexForm] = useState({
+    format: options[TransformationType.HEX].format,
+    separator: options[TransformationType.HEX].separator,
+    prefix: options[TransformationType.HEX].prefix
+  })
   return (
     <div className="w-full md:w-1/2 h-full bg-gray-50 p-6 overflow-y-auto">
       <div className="space-y-6">
@@ -146,7 +158,16 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                   >
                     Base64
                   </Button>
-                  <Dialog open={base64DialogOpen} onOpenChange={setBase64DialogOpen}>
+                  <Dialog open={base64DialogOpen} onOpenChange={(open) => {
+                    setBase64DialogOpen(open)
+                    if (open) {
+                      setBase64Form({
+                        urlSafe: options[TransformationType.BASE64].urlSafe,
+                        padding: options[TransformationType.BASE64].padding,
+                        customCharset: options[TransformationType.BASE64].customCharset
+                      })
+                    }
+                  }}>
                     <DialogTrigger asChild>
                       <Button
                         variant={selectedTransformation === TransformationType.BASE64 ? "default" : "outline"}
@@ -168,11 +189,21 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                             <label className="text-sm font-medium">Encoding Options</label>
                             <div className="space-y-2 mt-2">
                               <label className="flex items-center space-x-2">
-                                <input type="checkbox" defaultChecked className="rounded" />
+                                <input 
+                                  type="checkbox" 
+                                  checked={base64Form.urlSafe}
+                                  onChange={(e) => setBase64Form(prev => ({ ...prev, urlSafe: e.target.checked }))}
+                                  className="rounded" 
+                                />
                                 <span className="text-sm">URL-safe encoding</span>
                               </label>
                               <label className="flex items-center space-x-2">
-                                <input type="checkbox" className="rounded" />
+                                <input 
+                                  type="checkbox" 
+                                  checked={base64Form.padding}
+                                  onChange={(e) => setBase64Form(prev => ({ ...prev, padding: e.target.checked }))}
+                                  className="rounded" 
+                                />
                                 <span className="text-sm">Add padding</span>
                               </label>
                             </div>
@@ -183,7 +214,9 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                             </label>
                             <textarea
                               id="custom-charset"
-                              placeholder="Enter custom Base64 character set (optional)"
+                              placeholder="Enter custom Base64 character set (64 characters, optional)"
+                              value={base64Form.customCharset}
+                              onChange={(e) => setBase64Form(prev => ({ ...prev, customCharset: e.target.value }))}
                               className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[60px]"
                             />
                           </div>
@@ -194,6 +227,19 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                           Cancel
                         </Button>
                         <Button onClick={() => {
+                          if (base64Form.customCharset && base64Form.customCharset.length !== 64) {
+                            toast.error("Custom charset must be exactly 64 characters")
+                            return
+                          }
+                          
+                          onOptionsChange({
+                            ...options,
+                            [TransformationType.BASE64]: {
+                              urlSafe: base64Form.urlSafe,
+                              padding: base64Form.padding,
+                              customCharset: base64Form.customCharset
+                            }
+                          })
                           setBase64DialogOpen(false)
                           toast.success("Settings saved!")
                         }}>
@@ -211,7 +257,16 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                   >
                     Hexadecimal
                   </Button>
-                  <Dialog open={hexDialogOpen} onOpenChange={setHexDialogOpen}>
+                  <Dialog open={hexDialogOpen} onOpenChange={(open) => {
+                    setHexDialogOpen(open)
+                    if (open) {
+                      setHexForm({
+                        format: options[TransformationType.HEX].format,
+                        separator: options[TransformationType.HEX].separator,
+                        prefix: options[TransformationType.HEX].prefix
+                      })
+                    }
+                  }}>
                     <DialogTrigger asChild>
                       <Button
                         variant={selectedTransformation === TransformationType.HEX ? "default" : "outline"}
@@ -233,15 +288,33 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                             <label className="text-sm font-medium">Format Options</label>
                             <div className="space-y-2 mt-2">
                               <label className="flex items-center space-x-2">
-                                <input type="radio" name="hex-format" value="lowercase" defaultChecked />
+                                <input 
+                                  type="radio" 
+                                  name="hex-format" 
+                                  value="lowercase" 
+                                  checked={hexForm.format === 'lowercase'}
+                                  onChange={(e) => setHexForm(prev => ({ ...prev, format: e.target.value as 'lowercase' | 'uppercase' | 'no-prefix' }))}
+                                />
                                 <span className="text-sm">Lowercase (0x1a2b)</span>
                               </label>
                               <label className="flex items-center space-x-2">
-                                <input type="radio" name="hex-format" value="uppercase" />
+                                <input 
+                                  type="radio" 
+                                  name="hex-format" 
+                                  value="uppercase" 
+                                  checked={hexForm.format === 'uppercase'}
+                                  onChange={(e) => setHexForm(prev => ({ ...prev, format: e.target.value as 'lowercase' | 'uppercase' | 'no-prefix' }))}
+                                />
                                 <span className="text-sm">Uppercase (0x1A2B)</span>
                               </label>
                               <label className="flex items-center space-x-2">
-                                <input type="radio" name="hex-format" value="no-prefix" />
+                                <input 
+                                  type="radio" 
+                                  name="hex-format" 
+                                  value="no-prefix" 
+                                  checked={hexForm.format === 'no-prefix'}
+                                  onChange={(e) => setHexForm(prev => ({ ...prev, format: e.target.value as 'lowercase' | 'uppercase' | 'no-prefix' }))}
+                                />
                                 <span className="text-sm">No prefix (1a2b)</span>
                               </label>
                             </div>
@@ -254,6 +327,8 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                               id="hex-separator"
                               type="text"
                               placeholder="e.g., : or - (optional)"
+                              value={hexForm.separator}
+                              onChange={(e) => setHexForm(prev => ({ ...prev, separator: e.target.value }))}
                               className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                           </div>
@@ -265,6 +340,8 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                               id="hex-prefix"
                               type="text"
                               placeholder="e.g., 0x, #, or custom"
+                              value={hexForm.prefix}
+                              onChange={(e) => setHexForm(prev => ({ ...prev, prefix: e.target.value }))}
                               className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                           </div>
@@ -275,6 +352,14 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                           Cancel
                         </Button>
                         <Button onClick={() => {
+                          onOptionsChange({
+                            ...options,
+                            [TransformationType.HEX]: {
+                              format: hexForm.format,
+                              separator: hexForm.separator,
+                              prefix: hexForm.prefix
+                            }
+                          })
                           setHexDialogOpen(false)
                           toast.success("Settings saved!")
                         }}>
