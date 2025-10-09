@@ -1,12 +1,8 @@
-import { TransformationType, type TransformOptions } from "./transformationFunctions";
+import { TransformationType, type TransformOptionsMap } from "./transformationFunctions";
 
-export type TransformDefaultOptions = {
-	[K in TransformationType]: TransformOptions<K>
-}
-
-export const defaultTransformationOptions: TransformDefaultOptions = {
+export const defaultTransformationOptions: TransformOptionsMap = {
     [TransformationType.NO_TRANSFORMATION]: {},
-    [TransformationType.CAESAR]: { shift: 3 },
+    [TransformationType.CAESAR]: { shift: 3, customAlphabet: "abcdefghijklmnopqrstuvwxyz" },
     [TransformationType.BASE64]: {},
     [TransformationType.HEX]: {},
 }

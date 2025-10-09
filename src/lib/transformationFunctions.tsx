@@ -13,21 +13,21 @@ type CaesarOptions = {
 	customAlphabet?: string
 }
 
-type TransformOptionsMap = {
+export type TransformOptionsMap = {
 	[TransformationType.NO_TRANSFORMATION]: NoOptions
 	[TransformationType.CAESAR]: CaesarOptions
 	[TransformationType.BASE64]: NoOptions
 	[TransformationType.HEX]: NoOptions
 }
 
-export type TransformOptions<T extends TransformationType> = TransformOptionsMap[T]
+type TransformOptions<T extends TransformationType> = TransformOptionsMap[T]
 
 const noTransformation = (text: string, _opts: NoOptions): string => text
 const caesarFunc = (text: string, opts: CaesarOptions): string => caesarTransformation(text, opts)
 const base64Func = (text: string, opts: NoOptions): string => base64Transformation(text, opts)
 const hexFunc = (text: string, opts: NoOptions): string => hexTransformation(text, opts)
 
-export const transformationFunctions = {
+const transformationFunctions = {
 	[TransformationType.NO_TRANSFORMATION]: noTransformation,
 	[TransformationType.CAESAR]: caesarFunc,
 	[TransformationType.BASE64]: base64Func,
@@ -46,7 +46,7 @@ export function transformText<T extends TransformationType>(text: string, type: 
 	}
 }
 
-export const                                 caesarTransformation = (text: string, opts: CaesarOptions): string => {
+const caesarTransformation = (text: string, opts: CaesarOptions): string => {
     const shift = opts.shift ?? 3
 	const customAlphabet = opts.customAlphabet ?? "abcdefghijklmnopqrstuvwxyz"
 
@@ -61,12 +61,12 @@ export const                                 caesarTransformation = (text: strin
     }).join('')
 }
 
-export const hexTransformation = (text: string, opts: NoOptions): string => {
+const hexTransformation = (text: string, opts: NoOptions): string => {
     return text.split('').map(char =>
         char.charCodeAt(0).toString(16).padStart(2, '0')
     ).join(' ')
 }
 
-export const base64Transformation = (text: string, opts: NoOptions): string => {
+const base64Transformation = (text: string, opts: NoOptions): string => {
     return btoa(text)
 }

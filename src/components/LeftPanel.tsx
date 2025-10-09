@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { TransformationType } from '@/lib/transformationFunctions'
-import { type TransformDefaultOptions } from "@/lib/defaultTransformationOptions"
+import { TransformationType, type TransformOptionsMap } from '@/lib/transformationFunctions'
 import { Button } from '@/components/ui/button'
 import { ButtonGroup } from '@/components/ui/button-group'
 import {
@@ -24,8 +23,8 @@ import { toast } from 'sonner'
 interface LeftPanelProps {
   selectedTransformation: TransformationType
   onTransformationChange: (transformation: TransformationType) => void
-  options: TransformDefaultOptions
-  onOptionsChange: (options: TransformDefaultOptions) => void
+  options: TransformOptionsMap
+  onOptionsChange: (options: TransformOptionsMap) => void
 }
 
 function LeftPanel({ selectedTransformation, onTransformationChange, options, onOptionsChange }: LeftPanelProps) {
