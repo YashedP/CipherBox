@@ -48,7 +48,6 @@ export function transformText<T extends TransformationType>(text: string, type: 
 
 const caesarTransformation = (text: string, opts: CaesarOptions): string => {
     const shift = opts.shift ?? 3
-	const customAlphabet = opts.customAlphabet ?? "abcdefghijklmnopqrstuvwxyz"
 
     return text.split('').map(char => {
         if (char.match(/[a-zA-Z]/)) {
@@ -61,12 +60,12 @@ const caesarTransformation = (text: string, opts: CaesarOptions): string => {
     }).join('')
 }
 
-const hexTransformation = (text: string, opts: NoOptions): string => {
-    return text.split('').map(char =>
+const hexTransformation = (text: string, _opts: NoOptions): string => {
+	return text.split('').map(char =>
         char.charCodeAt(0).toString(16).padStart(2, '0')
     ).join(' ')
 }
 
-const base64Transformation = (text: string, opts: NoOptions): string => {
-    return btoa(text)
+const base64Transformation = (text: string, _opts: NoOptions): string => {
+	return btoa(text)
 }
