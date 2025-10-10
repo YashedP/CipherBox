@@ -3,8 +3,14 @@ import { TransformationType, type TransformOptionsMap } from "./transformationFu
 export const defaultTransformationOptions: TransformOptionsMap = {
     [TransformationType.NO_TRANSFORMATION]: {},
     [TransformationType.CAESAR]: { 
-        shift: 3, 
-        customAlphabet: ""
+        shift: 3
+    },
+    [TransformationType.MONO_ALPHABETIC]: {
+        key: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    },
+    [TransformationType.VIGENERE]: {
+        keyword: "KEY",
+        keyLength: 3
     },
     [TransformationType.BASE64]: {
         urlSafe: false,
@@ -15,5 +21,9 @@ export const defaultTransformationOptions: TransformOptionsMap = {
         format: 'lowercase',
         separator: ' ',
         prefix: '0x'
+    },
+    [TransformationType.RC4]: {
+        key: 'default-key',
+        drop: 0
     },
 }

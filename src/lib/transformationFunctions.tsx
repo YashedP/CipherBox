@@ -1,16 +1,25 @@
 export const TransformationType = {
     NO_TRANSFORMATION: -1,
     CAESAR: 0,
-    BASE64: 1,
-    HEX: 2,
+    MONO_ALPHABETIC: 1,
+    VIGENERE: 2,
+    BASE64: 3,
+    HEX: 4,
+    RC4: 5,
 } as const;
 
 export type TransformationType = typeof TransformationType[keyof typeof TransformationType];
 
 type NoOptions = Record<string, never>
 type CaesarOptions = { 
-	shift?: number,
-	customAlphabet?: string
+	shift?: number
+}
+type MonoAlphabeticOptions = {
+	key?: string
+}
+type VigenereOptions = {
+	keyword?: string,
+	keyLength?: number
 }
 type Base64Options = {
 	urlSafe?: boolean,
@@ -22,26 +31,39 @@ type HexOptions = {
 	separator?: string,
 	prefix?: string
 }
+type RC4Options = {
+	key?: string,
+	drop?: number
+}
 
 export type TransformOptionsMap = {
 	[TransformationType.NO_TRANSFORMATION]: NoOptions
 	[TransformationType.CAESAR]: CaesarOptions
+	[TransformationType.MONO_ALPHABETIC]: MonoAlphabeticOptions
+	[TransformationType.VIGENERE]: VigenereOptions
 	[TransformationType.BASE64]: Base64Options
 	[TransformationType.HEX]: HexOptions
+	[TransformationType.RC4]: RC4Options
 }
 
 type TransformOptions<T extends TransformationType> = TransformOptionsMap[T]
 
 const noTransformation = (text: string, _opts: NoOptions): string => text
 const caesarFunc = (text: string, opts: CaesarOptions): string => caesarTransformation(text, opts)
+const monoAlphabeticFunc = (text: string, opts: MonoAlphabeticOptions): string => monoAlphabeticTransformation(text, opts)
+const vigenereFunc = (text: string, opts: VigenereOptions): string => vigenereTransformation(text, opts)
 const base64Func = (text: string, opts: Base64Options): string => base64Transformation(text, opts)
 const hexFunc = (text: string, opts: HexOptions): string => hexTransformation(text, opts)
+const rc4Func = (text: string, opts: RC4Options): string => rc4Transformation(text, opts)
 
 const transformationFunctions = {
 	[TransformationType.NO_TRANSFORMATION]: noTransformation,
 	[TransformationType.CAESAR]: caesarFunc,
+	[TransformationType.MONO_ALPHABETIC]: monoAlphabeticFunc,
+	[TransformationType.VIGENERE]: vigenereFunc,
 	[TransformationType.BASE64]: base64Func,
 	[TransformationType.HEX]: hexFunc,
+	[TransformationType.RC4]: rc4Func,
 } as const
 
 export function transformText<T extends TransformationType>(text: string, type: T, options?: TransformOptions<T>): string {
@@ -65,6 +87,47 @@ const caesarTransformation = (text: string, opts: CaesarOptions): string => {
             const charCode = char.toLowerCase().charCodeAt(0)
             const shifted = ((charCode - 97 + shift) % 26) + 97
             return isUpper ? String.fromCharCode(shifted).toUpperCase() : String.fromCharCode(shifted)
+        }
+        return char
+    }).join('')
+}
+
+const monoAlphabeticTransformation = (text: string, opts: MonoAlphabeticOptions): string => {
+    const key = opts.key || 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    
+    if (key.length !== 26) return text
+    
+    return text.split('').map(char => {
+        if (char.match(/[a-zA-Z]/)) {
+            const isUpper = char === char.toUpperCase()
+            const charCode = char.toUpperCase().charCodeAt(0)
+            const index = charCode - 65
+            if (index >= 0 && index < 26) {
+                const encrypted = key[index]
+                return isUpper ? encrypted : encrypted.toLowerCase()
+            }
+        }
+        return char
+    }).join('')
+}
+
+const vigenereTransformation = (text: string, opts: VigenereOptions): string => {
+    const keyword = opts.keyword || 'KEY'
+    const keyLength = opts.keyLength || keyword.length
+    
+    if (keyword.length < 2) return text
+    
+    // Use only the first keyLength characters of the keyword
+    const effectiveKeyword = keyword.substring(0, keyLength).toUpperCase()
+    const key = effectiveKeyword.repeat(Math.ceil(text.length / keyLength))
+    
+    return text.split('').map((char, index) => {
+        if (char.match(/[a-zA-Z]/)) {
+            const isUpper = char === char.toUpperCase()
+            const charCode = char.toUpperCase().charCodeAt(0)
+            const keyCode = key[index].charCodeAt(0)
+            const shifted = ((charCode - 65 + keyCode - 65) % 26) + 65
+            return isUpper ? String.fromCharCode(shifted) : String.fromCharCode(shifted).toLowerCase()
         }
         return char
     }).join('')
@@ -112,4 +175,51 @@ const base64Transformation = (text: string, opts: Base64Options): string => {
 	}
 	
 	return encoded
+}
+
+const rc4Transformation = (text: string, opts: RC4Options): string => {
+	try {
+		const key = opts.key || 'default-key'
+		const drop = opts.drop || 0
+		
+		// Simple RC4 implementation
+		const keyBytes = new TextEncoder().encode(key)
+		const textBytes = new TextEncoder().encode(text)
+		
+		// Initialize S-box
+		const S = new Array(256)
+		for (let i = 0; i < 256; i++) {
+			S[i] = i
+		}
+		
+		// Key scheduling
+		let j = 0
+		for (let i = 0; i < 256; i++) {
+			j = (j + S[i] + keyBytes[i % keyBytes.length]) % 256
+			;[S[i], S[j]] = [S[j], S[i]]
+		}
+		
+		// Drop first N bytes if specified
+		let i = 0
+		j = 0
+		for (let k = 0; k < drop; k++) {
+			i = (i + 1) % 256
+			j = (j + S[i]) % 256
+			;[S[i], S[j]] = [S[j], S[i]]
+		}
+		
+		// Encrypt/decrypt
+		const result = new Uint8Array(textBytes.length)
+		for (let k = 0; k < textBytes.length; k++) {
+			i = (i + 1) % 256
+			j = (j + S[i]) % 256
+			;[S[i], S[j]] = [S[j], S[i]]
+			const K = S[(S[i] + S[j]) % 256]
+			result[k] = textBytes[k] ^ K
+		}
+		
+		return new TextDecoder().decode(result)
+	} catch (error) {
+		return 'Error: RC4 cipher requires valid configuration'
+	}
 }
