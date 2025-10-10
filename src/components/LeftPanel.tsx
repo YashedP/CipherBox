@@ -34,6 +34,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
   const [base64DialogOpen, setBase64DialogOpen] = useState(false)
   const [hexDialogOpen, setHexDialogOpen] = useState(false)
   const [rc4DialogOpen, setRc4DialogOpen] = useState(false)
+  const [desDialogOpen, setDesDialogOpen] = useState(false)
   
   const [caesarForm, setCaesarForm] = useState({
     shift: options[TransformationType.CAESAR].shift
@@ -64,6 +65,13 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
   const [rc4Form, setRc4Form] = useState({
     key: options[TransformationType.RC4].key,
     drop: options[TransformationType.RC4].drop
+  })
+  
+  const [desForm, setDesForm] = useState({
+    key: options[TransformationType.DES].key,
+    mode: options[TransformationType.DES].mode,
+    padding: options[TransformationType.DES].padding,
+    iv: options[TransformationType.DES].iv
   })
   return (
     <div className="w-full md:w-1/2 h-full bg-gray-50 p-6 overflow-y-auto">
@@ -650,6 +658,157 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                             }
                           })
                           setRc4DialogOpen(false)
+                          toast.success("Settings saved!")
+                        }}>
+                          Apply Settings
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.DES ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.DES)}
+                  >
+                    DES Cipher
+                  </Button>
+                  <Dialog open={desDialogOpen} onOpenChange={(open) => {
+                    setDesDialogOpen(open)
+                    if (open) {
+                      setDesForm({
+                        key: options[TransformationType.DES].key,
+                        mode: options[TransformationType.DES].mode,
+                        padding: options[TransformationType.DES].padding,
+                        iv: options[TransformationType.DES].iv
+                      })
+                    }
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.DES ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[600px]">
+                      <DialogHeader>
+                        <DialogTitle>DES Cipher Settings</DialogTitle>
+                        <DialogDescription>
+                          Configure the key, mode of operation, padding scheme, and IV for DES encryption.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <label htmlFor="des-key" className="text-right">
+                            Key *
+                          </label>
+                          <input
+                            id="des-key"
+                            type="text"
+                            placeholder="Enter encryption key"
+                            value={desForm.key}
+                            onChange={(e) => setDesForm(prev => ({ ...prev, key: e.target.value }))}
+                            className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <label htmlFor="des-mode" className="text-right">
+                            Mode *
+                          </label>
+                          <select
+                            id="des-mode"
+                            value={desForm.mode}
+                            onChange={(e) => setDesForm(prev => ({ ...prev, mode: e.target.value as 'ECB' | 'CBC' | 'CFB' | 'OFB' | 'CTR' }))}
+                            className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="ECB">ECB</option>
+                            <option value="CBC">CBC</option>
+                            <option value="CFB">CFB</option>
+                            <option value="OFB">OFB</option>
+                            <option value="CTR">CTR</option>
+                          </select>
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <label htmlFor="des-padding" className="text-right">
+                            Padding *
+                          </label>
+                          <select
+                            id="des-padding"
+                            value={desForm.padding}
+                            onChange={(e) => setDesForm(prev => ({ ...prev, padding: e.target.value as 'Pkcs7' | 'Iso97971' | 'AnsiX923' | 'Iso10126' | 'ZeroPadding' | 'NoPadding' }))}
+                            className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="Pkcs7">Pkcs7</option>
+                            <option value="Iso97971">Iso97971</option>
+                            <option value="AnsiX923">AnsiX923</option>
+                            <option value="Iso10126">Iso10126</option>
+                            <option value="ZeroPadding">ZeroPadding</option>
+                            <option value="NoPadding">NoPadding</option>
+                          </select>
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <label htmlFor="des-iv" className="text-right">
+                            IV (hex)
+                          </label>
+                          <input
+                            id="des-iv"
+                            type="text"
+                            placeholder="16 hex characters (8 bytes) - required for non-ECB modes"
+                            value={desForm.iv}
+                            onChange={(e) => setDesForm(prev => ({ ...prev, iv: e.target.value }))}
+                            className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setDesDialogOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button onClick={() => {
+                          if (!desForm.key) {
+                            toast.error("Key is required")
+                            return
+                          }
+                          
+                          if (!desForm.mode) {
+                            toast.error("Mode is required")
+                            return
+                          }
+                          
+                          if (!desForm.padding) {
+                            toast.error("Padding is required")
+                            return
+                          }
+                          
+                          if (desForm.mode !== 'ECB' && !desForm.iv) {
+                            toast.error("IV is required for non-ECB modes")
+                            return
+                          }
+                          
+                          if (desForm.iv && desForm.iv.length !== 16) {
+                            toast.error("IV must be exactly 16 hex characters (8 bytes)")
+                            return
+                          }
+                          
+                          // Validate hex format for IV
+                          if (desForm.iv && !/^[0-9A-Fa-f]{16}$/.test(desForm.iv)) {
+                            toast.error("IV must contain only valid hex characters")
+                            return
+                          }
+                          
+                          onOptionsChange({
+                            ...options,
+                            [TransformationType.DES]: {
+                              key: desForm.key,
+                              mode: desForm.mode,
+                              padding: desForm.padding,
+                              iv: desForm.iv
+                            }
+                          })
+                          setDesDialogOpen(false)
                           toast.success("Settings saved!")
                         }}>
                           Apply Settings

@@ -1,3 +1,5 @@
+import * as CryptoJS from 'crypto-js'
+
 export const TransformationType = {
     NO_TRANSFORMATION: -1,
     CAESAR: 0,
@@ -6,6 +8,7 @@ export const TransformationType = {
     BASE64: 3,
     HEX: 4,
     RC4: 5,
+    DES: 6,
 } as const;
 
 export type TransformationType = typeof TransformationType[keyof typeof TransformationType];
@@ -35,6 +38,12 @@ type RC4Options = {
 	key?: string,
 	drop?: number
 }
+type DESOptions = {
+	key?: string,
+	mode?: 'ECB' | 'CBC' | 'CFB' | 'OFB' | 'CTR',
+	padding?: 'Pkcs7' | 'Iso97971' | 'AnsiX923' | 'Iso10126' | 'ZeroPadding' | 'NoPadding',
+	iv?: string
+}
 
 export type TransformOptionsMap = {
 	[TransformationType.NO_TRANSFORMATION]: NoOptions
@@ -44,6 +53,7 @@ export type TransformOptionsMap = {
 	[TransformationType.BASE64]: Base64Options
 	[TransformationType.HEX]: HexOptions
 	[TransformationType.RC4]: RC4Options
+	[TransformationType.DES]: DESOptions
 }
 
 type TransformOptions<T extends TransformationType> = TransformOptionsMap[T]
@@ -55,6 +65,7 @@ const vigenereFunc = (text: string, opts: VigenereOptions): string => vigenereTr
 const base64Func = (text: string, opts: Base64Options): string => base64Transformation(text, opts)
 const hexFunc = (text: string, opts: HexOptions): string => hexTransformation(text, opts)
 const rc4Func = (text: string, opts: RC4Options): string => rc4Transformation(text, opts)
+const desFunc = (text: string, opts: DESOptions): string => desTransformation(text, opts)
 
 const transformationFunctions = {
 	[TransformationType.NO_TRANSFORMATION]: noTransformation,
@@ -64,6 +75,7 @@ const transformationFunctions = {
 	[TransformationType.BASE64]: base64Func,
 	[TransformationType.HEX]: hexFunc,
 	[TransformationType.RC4]: rc4Func,
+	[TransformationType.DES]: desFunc,
 } as const
 
 export function transformText<T extends TransformationType>(text: string, type: T, options?: TransformOptions<T>): string {
@@ -221,5 +233,101 @@ const rc4Transformation = (text: string, opts: RC4Options): string => {
 		return new TextDecoder().decode(result)
 	} catch (error) {
 		return 'Error: RC4 cipher requires valid configuration'
+	}
+}
+
+const desTransformation = (text: string, opts: DESOptions): string => {
+	try {
+		
+		const key = opts.key || 'default-key'
+		const mode = opts.mode || 'ECB'
+		const padding = opts.padding || 'Pkcs7'
+		const iv = opts.iv
+		
+		// Validate required parameters
+		if (!key) {
+			return 'Error: DES requires a key'
+		}
+		
+		if (!mode) {
+			return 'Error: DES requires a mode of operation'
+		}
+		
+		if (!padding) {
+			return 'Error: DES requires a padding scheme'
+		}
+		
+		// Validate IV for non-ECB modes
+		if (mode !== 'ECB' && !iv) {
+			return 'Error: IV is required for non-ECB modes'
+		}
+		
+		// Validate IV length (8 bytes for DES)
+		if (iv && iv.length !== 16) { // 16 hex characters = 8 bytes
+			return 'Error: IV must be exactly 8 bytes (16 hex characters)'
+		}
+		
+		// Convert mode string to CryptoJS mode
+		let cryptoMode
+		switch (mode) {
+			case 'ECB':
+				cryptoMode = CryptoJS.mode.ECB
+				break
+			case 'CBC':
+				cryptoMode = CryptoJS.mode.CBC
+				break
+			case 'CFB':
+				cryptoMode = CryptoJS.mode.CFB
+				break
+			case 'OFB':
+				cryptoMode = CryptoJS.mode.OFB
+				break
+			case 'CTR':
+				cryptoMode = CryptoJS.mode.CTR
+				break
+			default:
+				return 'Error: Invalid mode of operation'
+		}
+		
+		// Convert padding string to CryptoJS padding
+		let cryptoPadding
+		switch (padding) {
+			case 'Pkcs7':
+				cryptoPadding = CryptoJS.pad.Pkcs7
+				break
+			case 'Iso97971':
+				cryptoPadding = CryptoJS.pad.Iso97971
+				break
+			case 'AnsiX923':
+				cryptoPadding = CryptoJS.pad.AnsiX923
+				break
+			case 'Iso10126':
+				cryptoPadding = CryptoJS.pad.Iso10126
+				break
+			case 'ZeroPadding':
+				cryptoPadding = CryptoJS.pad.ZeroPadding
+				break
+			case 'NoPadding':
+				cryptoPadding = CryptoJS.pad.NoPadding
+				break
+			default:
+				return 'Error: Invalid padding scheme'
+		}
+		
+		// Prepare key and IV
+		const keyWordArray = CryptoJS.enc.Utf8.parse(key)
+		const ivWordArray = iv ? CryptoJS.enc.Hex.parse(iv) : undefined
+		
+		// Encrypt the text
+		const encrypted = CryptoJS.DES.encrypt(text, keyWordArray, {
+			mode: cryptoMode,
+			padding: cryptoPadding,
+			iv: ivWordArray
+		})
+		
+		return encrypted.toString()
+		
+	} catch (error) {
+		return 'Error: DES encryption failed - ' + (error as Error).message
 	}
 }
