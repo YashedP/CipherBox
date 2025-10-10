@@ -35,6 +35,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
   const [hexDialogOpen, setHexDialogOpen] = useState(false)
   const [rc4DialogOpen, setRc4DialogOpen] = useState(false)
   const [desDialogOpen, setDesDialogOpen] = useState(false)
+  const [aesDialogOpen, setAesDialogOpen] = useState(false)
   
   const [caesarForm, setCaesarForm] = useState({
     shift: options[TransformationType.CAESAR].shift
@@ -72,6 +73,13 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
     mode: options[TransformationType.DES].mode,
     padding: options[TransformationType.DES].padding,
     iv: options[TransformationType.DES].iv
+  })
+  
+  const [aesForm, setAesForm] = useState({
+    key: options[TransformationType.AES].key,
+    mode: options[TransformationType.AES].mode,
+    padding: options[TransformationType.AES].padding,
+    iv: options[TransformationType.AES].iv
   })
   return (
     <div className="w-full md:w-1/2 h-full bg-gray-50 p-6 overflow-y-auto">
@@ -809,6 +817,157 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                             }
                           })
                           setDesDialogOpen(false)
+                          toast.success("Settings saved!")
+                        }}>
+                          Apply Settings
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.AES ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.AES)}
+                  >
+                    AES Cipher
+                  </Button>
+                  <Dialog open={aesDialogOpen} onOpenChange={(open) => {
+                    setAesDialogOpen(open)
+                    if (open) {
+                      setAesForm({
+                        key: options[TransformationType.AES].key,
+                        mode: options[TransformationType.AES].mode,
+                        padding: options[TransformationType.AES].padding,
+                        iv: options[TransformationType.AES].iv
+                      })
+                    }
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.AES ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[600px]">
+                      <DialogHeader>
+                        <DialogTitle>AES Cipher Settings</DialogTitle>
+                        <DialogDescription>
+                          Configure the key, mode of operation, padding scheme, and IV for AES encryption.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <label htmlFor="aes-key" className="text-right">
+                            Key *
+                          </label>
+                          <input
+                            id="aes-key"
+                            type="text"
+                            placeholder="Enter encryption key"
+                            value={aesForm.key}
+                            onChange={(e) => setAesForm(prev => ({ ...prev, key: e.target.value }))}
+                            className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <label htmlFor="aes-mode" className="text-right">
+                            Mode *
+                          </label>
+                          <select
+                            id="aes-mode"
+                            value={aesForm.mode}
+                            onChange={(e) => setAesForm(prev => ({ ...prev, mode: e.target.value as 'ECB' | 'CBC' | 'CFB' | 'OFB' | 'CTR' }))}
+                            className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="ECB">ECB</option>
+                            <option value="CBC">CBC</option>
+                            <option value="CFB">CFB</option>
+                            <option value="OFB">OFB</option>
+                            <option value="CTR">CTR</option>
+                          </select>
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <label htmlFor="aes-padding" className="text-right">
+                            Padding *
+                          </label>
+                          <select
+                            id="aes-padding"
+                            value={aesForm.padding}
+                            onChange={(e) => setAesForm(prev => ({ ...prev, padding: e.target.value as 'Pkcs7' | 'Iso97971' | 'AnsiX923' | 'Iso10126' | 'ZeroPadding' | 'NoPadding' }))}
+                            className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="Pkcs7">Pkcs7</option>
+                            <option value="Iso97971">Iso97971</option>
+                            <option value="AnsiX923">AnsiX923</option>
+                            <option value="Iso10126">Iso10126</option>
+                            <option value="ZeroPadding">ZeroPadding</option>
+                            <option value="NoPadding">NoPadding</option>
+                          </select>
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <label htmlFor="aes-iv" className="text-right">
+                            IV (hex)
+                          </label>
+                          <input
+                            id="aes-iv"
+                            type="text"
+                            placeholder="32 hex characters (16 bytes) - required for non-ECB modes"
+                            value={aesForm.iv}
+                            onChange={(e) => setAesForm(prev => ({ ...prev, iv: e.target.value }))}
+                            className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setAesDialogOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button onClick={() => {
+                          if (!aesForm.key) {
+                            toast.error("Key is required")
+                            return
+                          }
+                          
+                          if (!aesForm.mode) {
+                            toast.error("Mode is required")
+                            return
+                          }
+                          
+                          if (!aesForm.padding) {
+                            toast.error("Padding is required")
+                            return
+                          }
+                          
+                          if (aesForm.mode !== 'ECB' && !aesForm.iv) {
+                            toast.error("IV is required for non-ECB modes")
+                            return
+                          }
+                          
+                          if (aesForm.iv && aesForm.iv.length !== 32) {
+                            toast.error("IV must be exactly 32 hex characters (16 bytes)")
+                            return
+                          }
+                          
+                          // Validate hex format for IV
+                          if (aesForm.iv && !/^[0-9A-Fa-f]{32}$/.test(aesForm.iv)) {
+                            toast.error("IV must contain only valid hex characters")
+                            return
+                          }
+                          
+                          onOptionsChange({
+                            ...options,
+                            [TransformationType.AES]: {
+                              key: aesForm.key,
+                              mode: aesForm.mode,
+                              padding: aesForm.padding,
+                              iv: aesForm.iv
+                            }
+                          })
+                          setAesDialogOpen(false)
                           toast.success("Settings saved!")
                         }}>
                           Apply Settings

@@ -32,4 +32,10 @@ export const defaultTransformationOptions: TransformOptionsMap = {
         padding: 'Pkcs7',
         iv: ''
     },
+    [TransformationType.AES]: {
+        key: 'default-key',
+        mode: 'ECB',
+        padding: 'Pkcs7',
+        iv: ''
+    },
 }

@@ -9,6 +9,7 @@ export const transformationDescriptions = {
 	[TransformationType.HEX]: 'Convert text to/from hexadecimal representation',
 	[TransformationType.RC4]: 'Stream cipher using RC4 algorithm with configurable key and drop bytes',
 	[TransformationType.DES]: 'Data Encryption Standard (DES) with configurable mode, padding, and IV',
+	[TransformationType.AES]: 'Advanced Encryption Standard (AES) with configurable mode, padding, and IV',
 } as const
 
 // Get transformation description using array index
