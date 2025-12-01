@@ -38,4 +38,6 @@ export const defaultTransformationOptions: TransformOptionsMap = {
         padding: 'Pkcs7',
         iv: ''
     },
+    [TransformationType.URL_ENCODE]: {},
+    [TransformationType.URL_DECODE]: {},
 }

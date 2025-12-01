@@ -36,6 +36,8 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
   const [rc4DialogOpen, setRc4DialogOpen] = useState(false)
   const [desDialogOpen, setDesDialogOpen] = useState(false)
   const [aesDialogOpen, setAesDialogOpen] = useState(false)
+  const [urlEncodeDialogOpen, setUrlEncodeDialogOpen] = useState(false)
+  const [urlDecodeDialogOpen, setUrlDecodeDialogOpen] = useState(false)
   
   const [caesarForm, setCaesarForm] = useState({
     shift: options[TransformationType.CAESAR].shift
@@ -971,6 +973,70 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                           toast.success("Settings saved!")
                         }}>
                           Apply Settings
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.URL_ENCODE ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.URL_ENCODE)}
+                  >
+                    URL Encode
+                  </Button>
+                  <Dialog open={urlEncodeDialogOpen} onOpenChange={setUrlEncodeDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.URL_ENCODE ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>URL Encode Settings</DialogTitle>
+                        <DialogDescription>
+                          URL encoding converts special characters to percent-encoded format. No additional configuration needed.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setUrlEncodeDialogOpen(false)}>
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.URL_DECODE ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.URL_DECODE)}
+                  >
+                    URL Decode
+                  </Button>
+                  <Dialog open={urlDecodeDialogOpen} onOpenChange={setUrlDecodeDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.URL_DECODE ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>URL Decode Settings</DialogTitle>
+                        <DialogDescription>
+                          URL decoding converts percent-encoded characters back to their original format. No additional configuration needed.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setUrlDecodeDialogOpen(false)}>
+                          Close
                         </Button>
                       </DialogFooter>
                     </DialogContent>

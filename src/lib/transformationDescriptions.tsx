@@ -10,6 +10,8 @@ export const transformationDescriptions = {
 	[TransformationType.RC4]: 'Stream cipher using RC4 algorithm with configurable key and drop bytes',
 	[TransformationType.DES]: 'Data Encryption Standard (DES) with configurable mode, padding, and IV',
 	[TransformationType.AES]: 'Advanced Encryption Standard (AES) with configurable mode, padding, and IV',
+	[TransformationType.URL_ENCODE]: 'Encode text using URL encoding (percent encoding)',
+	[TransformationType.URL_DECODE]: 'Decode URL-encoded text back to original format',
 } as const
 
 // Get transformation description using array index

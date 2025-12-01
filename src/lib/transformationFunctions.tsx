@@ -10,6 +10,8 @@ export const TransformationType = {
     RC4: 5,
     DES: 6,
     AES: 7,
+    URL_ENCODE: 8,
+    URL_DECODE: 9,
 } as const;
 
 export type TransformationType = typeof TransformationType[keyof typeof TransformationType];
@@ -62,6 +64,8 @@ export type TransformOptionsMap = {
 	[TransformationType.RC4]: RC4Options
 	[TransformationType.DES]: DESOptions
 	[TransformationType.AES]: AESOptions
+	[TransformationType.URL_ENCODE]: NoOptions
+	[TransformationType.URL_DECODE]: NoOptions
 }
 
 type TransformOptions<T extends TransformationType> = TransformOptionsMap[T]
@@ -75,6 +79,8 @@ const hexFunc = (text: string, opts: HexOptions): string => hexTransformation(te
 const rc4Func = (text: string, opts: RC4Options): string => rc4Transformation(text, opts)
 const desFunc = (text: string, opts: DESOptions): string => desTransformation(text, opts)
 const aesFunc = (text: string, opts: AESOptions): string => aesTransformation(text, opts)
+const urlEncodeFunc = (text: string, _opts: NoOptions): string => urlEncodeTransformation(text)
+const urlDecodeFunc = (text: string, _opts: NoOptions): string => urlDecodeTransformation(text)
 
 const transformationFunctions = {
 	[TransformationType.NO_TRANSFORMATION]: noTransformation,
@@ -86,6 +92,8 @@ const transformationFunctions = {
 	[TransformationType.RC4]: rc4Func,
 	[TransformationType.DES]: desFunc,
 	[TransformationType.AES]: aesFunc,
+	[TransformationType.URL_ENCODE]: urlEncodeFunc,
+	[TransformationType.URL_DECODE]: urlDecodeFunc,
 } as const
 
 export function transformText<T extends TransformationType>(text: string, type: T, options?: TransformOptions<T>): string {
@@ -387,5 +395,21 @@ const aesTransformation = (text: string, opts: AESOptions): string => {
 		
 	} catch (error) {
 		return 'Error: AES encryption failed - ' + (error as Error).message
+	}
+}
+
+const urlEncodeTransformation = (text: string): string => {
+	try {
+		return encodeURIComponent(text)
+	} catch (error) {
+		return 'Error: URL encoding failed - ' + (error as Error).message
+	}
+}
+
+const urlDecodeTransformation = (text: string): string => {
+	try {
+		return decodeURIComponent(text)
+	} catch (error) {
+		return 'Error: URL decoding failed - ' + (error as Error).message
 	}
 }
