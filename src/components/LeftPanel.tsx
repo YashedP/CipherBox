@@ -20,6 +20,170 @@ import {
 import { Settings } from 'lucide-react'
 import { toast } from 'sonner'
 
+const algorithmInfoLinks: Partial<Record<TransformationType, { label: string, url: string }>> = {
+  [TransformationType.CAESAR]: {
+    label: 'the Caesar cipher',
+    url: 'https://en.wikipedia.org/wiki/Caesar_cipher'
+  },
+  [TransformationType.MONO_ALPHABETIC]: {
+    label: 'the substitution cipher',
+    url: 'https://en.wikipedia.org/wiki/Substitution_cipher'
+  },
+  [TransformationType.VIGENERE]: {
+    label: 'the Vigenère cipher',
+    url: 'https://en.wikipedia.org/wiki/Vigen%c3%a8re_cipher'
+  },
+  [TransformationType.ROT13]: {
+    label: 'ROT13',
+    url: 'https://en.wikipedia.org/wiki/ROT13'
+  },
+  [TransformationType.BASE64]: {
+    label: 'Base64 encoding',
+    url: 'https://en.wikipedia.org/wiki/Base64'
+  },
+  [TransformationType.HEX]: {
+    label: 'hexadecimal encoding',
+    url: 'https://en.wikipedia.org/wiki/Hexadecimal'
+  },
+  [TransformationType.RC4]: {
+    label: 'the RC4 stream cipher',
+    url: 'https://en.wikipedia.org/wiki/RC4'
+  },
+  [TransformationType.DES]: {
+    label: 'the DES cipher',
+    url: 'https://en.wikipedia.org/wiki/Data_Encryption_Standard'
+  },
+  [TransformationType.AES]: {
+    label: 'the AES cipher',
+    url: 'https://en.wikipedia.org/wiki/Advanced_Encryption_Standard'
+  },
+  [TransformationType.CHACHA20]: {
+    label: 'the ChaCha20 cipher',
+    url: 'https://en.wikipedia.org/wiki/Salsa20#ChaCha_variant'
+  },
+  [TransformationType.RSA_ENCRYPT]: {
+    label: 'the RSA cryptosystem',
+    url: 'https://en.wikipedia.org/wiki/RSA_cryptosystem'
+  },
+  [TransformationType.RSA_DECRYPT]: {
+    label: 'the RSA cryptosystem',
+    url: 'https://en.wikipedia.org/wiki/RSA_cryptosystem'
+  },
+  [TransformationType.RSA_SIGN]: {
+    label: 'the RSA cryptosystem',
+    url: 'https://en.wikipedia.org/wiki/RSA_cryptosystem'
+  },
+  [TransformationType.RSA_VERIFY]: {
+    label: 'the RSA cryptosystem',
+    url: 'https://en.wikipedia.org/wiki/RSA_cryptosystem'
+  },
+  [TransformationType.RSA_KEYGEN]: {
+    label: 'the RSA cryptosystem',
+    url: 'https://en.wikipedia.org/wiki/RSA_cryptosystem'
+  },
+  [TransformationType.ECDSA_SIGN]: {
+    label: 'the ECDSA standard',
+    url: 'https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm'
+  },
+  [TransformationType.ECDSA_VERIFY]: {
+    label: 'the ECDSA standard',
+    url: 'https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm'
+  },
+  [TransformationType.ECDSA_KEYGEN]: {
+    label: 'the ECDSA standard',
+    url: 'https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm'
+  },
+  [TransformationType.MD5]: {
+    label: 'the MD5 hash function',
+    url: 'https://wikipedia.org/wiki/MD5'
+  },
+  [TransformationType.SHA1]: {
+    label: 'the SHA-1 hash function',
+    url: 'https://en.wikipedia.org/wiki/SHA-1'
+  },
+  [TransformationType.SHA256]: {
+    label: 'the SHA-2 family',
+    url: 'https://en.wikipedia.org/wiki/SHA-2'
+  },
+  [TransformationType.SHA384]: {
+    label: 'the SHA-2 family',
+    url: 'https://en.wikipedia.org/wiki/SHA-2'
+  },
+  [TransformationType.SHA512]: {
+    label: 'the SHA-2 family',
+    url: 'https://en.wikipedia.org/wiki/SHA-2'
+  },
+  [TransformationType.SHA3_256]: {
+    label: 'the SHA-3 standard',
+    url: 'https://en.wikipedia.org/wiki/SHA-3'
+  },
+  [TransformationType.BLAKE2B]: {
+    label: 'the BLAKE2b hash',
+    url: 'https://en.wikipedia.org/wiki/BLAKE_(hash_function)#BLAKE2b_algorithm'
+  },
+  [TransformationType.HMAC]: {
+    label: 'the HMAC construction',
+    url: 'https://en.wikipedia.org/wiki/HMAC'
+  },
+  [TransformationType.BASE32]: {
+    label: 'Base32 encoding',
+    url: 'https://en.wikipedia.org/wiki/Base32'
+  },
+  [TransformationType.BASE58]: {
+    label: 'Base58 encoding',
+    url: 'https://en.wikipedia.org/wiki/Binary-to-text_encoding#Base58'
+  },
+  [TransformationType.BASE85]: {
+    label: 'Ascii85 encoding',
+    url: 'https://en.wikipedia.org/wiki/Ascii85'
+  },
+  [TransformationType.HEX_TO_TEXT]: {
+    label: 'hexadecimal decoding',
+    url: 'https://en.wikipedia.org/wiki/Hexadecimal'
+  },
+  [TransformationType.URL_ENCODE]: {
+    label: 'percent-encoding',
+    url: 'https://en.wikipedia.org/wiki/Percent-encoding'
+  },
+  [TransformationType.URL_DECODE]: {
+    label: 'percent-encoding',
+    url: 'https://en.wikipedia.org/wiki/Percent-encoding'
+  },
+  [TransformationType.HTML_ENCODE]: {
+    label: 'HTML entities',
+    url: 'https://en.wikipedia.org/wiki/HTML'
+  },
+  [TransformationType.HTML_DECODE]: {
+    label: 'HTML entities',
+    url: 'https://en.wikipedia.org/wiki/HTML'
+  },
+  [TransformationType.UNICODE_ESCAPE]: {
+    label: 'Unicode encoding',
+    url: 'https://en.wikipedia.org/wiki/Unicode'
+  },
+  [TransformationType.UNICODE_UNESCAPE]: {
+    label: 'Unicode encoding',
+    url: 'https://en.wikipedia.org/wiki/Unicode'
+  }
+}
+
+const AlgorithmInfoLink = ({ type }: { type: TransformationType }) => {
+  const info = algorithmInfoLinks[type]
+
+  if (!info) return null
+
+  return (
+    <a
+      href={info.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="mt-2 text-sm text-blue-600 hover:underline"
+    >
+      Learn more about {info.label}
+    </a>
+  )
+}
+
 interface LeftPanelProps {
   selectedTransformation: TransformationType
   onTransformationChange: (transformation: TransformationType) => void
@@ -214,6 +378,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Configure the shift value for the Caesar cipher.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.CAESAR} />
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
@@ -291,6 +456,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Configure the permutation key for the mono-alphabetic cipher.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.MONO_ALPHABETIC} />
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
@@ -374,6 +540,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Configure the keyword for the Vigenère cipher.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.VIGENERE} />
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
@@ -478,6 +645,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           ROT13 is a simple letter substitution cipher that shifts each letter by 13 positions in the alphabet. It is self-inverse, meaning applying ROT13 twice returns the original text. No additional configuration needed.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.ROT13} />
                       </DialogHeader>
                       <DialogFooter>
                         <Button onClick={() => setRot13DialogOpen(false)}>
@@ -528,6 +696,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Configure the key and drop parameters for the RC4 stream cipher.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.RC4} />
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
@@ -622,6 +791,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Configure the key, mode of operation, padding scheme, and IV for DES encryption.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.DES} />
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
@@ -773,6 +943,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Configure the key, mode of operation, padding scheme, and IV for AES encryption.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.AES} />
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
@@ -923,6 +1094,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Configure the key, nonce, and output format for ChaCha20 stream cipher. WARNING: Never reuse the same nonce with the same key.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.CHACHA20} />
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="space-y-4">
@@ -1053,6 +1225,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Encrypt data using RSA public key. Requires a PEM-formatted public key.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.RSA_ENCRYPT} />
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="space-y-4">
@@ -1146,6 +1319,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Decrypt data using RSA private key. Requires a PEM-formatted private key.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.RSA_DECRYPT} />
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="space-y-4">
@@ -1239,6 +1413,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Create a digital signature using RSA private key. The signature can be verified with the corresponding public key.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.RSA_SIGN} />
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="space-y-4">
@@ -1333,6 +1508,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Verify an RSA signature using a public key. Requires the public key, signature, and original message.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.RSA_VERIFY} />
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="space-y-4">
@@ -1444,6 +1620,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Create an ECDSA digital signature using elliptic curve private key. Private key must be in hexadecimal format.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.ECDSA_SIGN} />
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="space-y-4">
@@ -1540,6 +1717,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Verify an ECDSA signature using elliptic curve public key. Requires public key, signature, and original message.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.ECDSA_VERIFY} />
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="space-y-4">
@@ -1657,6 +1835,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Generate RSA public/private key pairs for encryption, decryption, signing, and verification. Output will be in PEM format.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.RSA_KEYGEN} />
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="space-y-4">
@@ -1732,6 +1911,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Generate ECDSA public/private key pairs for signing and verification. Output will be in hexadecimal format.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.ECDSA_KEYGEN} />
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="space-y-4">
@@ -1810,6 +1990,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           MD5 produces a 128-bit hash. WARNING: MD5 is cryptographically broken and should only be used for non-security purposes like checksums. No additional configuration needed.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.MD5} />
                       </DialogHeader>
                       <DialogFooter>
                         <Button onClick={() => setMd5DialogOpen(false)}>
@@ -1842,6 +2023,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           SHA1 produces a 160-bit hash. WARNING: SHA1 is deprecated due to collision attacks and should not be used for security purposes. No additional configuration needed.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.SHA1} />
                       </DialogHeader>
                       <DialogFooter>
                         <Button onClick={() => setSha1DialogOpen(false)}>
@@ -1874,6 +2056,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           SHA256 produces a 256-bit hash from the SHA-2 family. Widely used and secure for cryptographic purposes. No additional configuration needed.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.SHA256} />
                       </DialogHeader>
                       <DialogFooter>
                         <Button onClick={() => setSha256DialogOpen(false)}>
@@ -1906,6 +2089,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           SHA384 produces a 384-bit hash from the SHA-2 family. Provides additional security margin over SHA256. No additional configuration needed.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.SHA384} />
                       </DialogHeader>
                       <DialogFooter>
                         <Button onClick={() => setSha384DialogOpen(false)}>
@@ -1938,6 +2122,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           SHA512 produces a 512-bit hash from the SHA-2 family. Offers maximum security margin in the SHA-2 family. No additional configuration needed.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.SHA512} />
                       </DialogHeader>
                       <DialogFooter>
                         <Button onClick={() => setSha512DialogOpen(false)}>
@@ -1970,6 +2155,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           SHA3-256 produces a 256-bit hash from the SHA-3 (Keccak) family. Modern alternative to SHA-2 with different design. No additional configuration needed.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.SHA3_256} />
                       </DialogHeader>
                       <DialogFooter>
                         <Button onClick={() => setSha3_256DialogOpen(false)}>
@@ -2002,6 +2188,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           BLAKE2B is a fast cryptographic hash function, faster than MD5, SHA-1, and SHA-2 while being at least as secure as SHA-3. No additional configuration needed.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.BLAKE2B} />
                       </DialogHeader>
                       <DialogFooter>
                         <Button onClick={() => setBlake2bDialogOpen(false)}>
@@ -2042,6 +2229,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Hash-based Message Authentication Code (HMAC) uses a secret key with a hash function to verify data integrity and authenticity.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.HMAC} />
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="space-y-4">
@@ -2145,6 +2333,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Configure Base64 encoding/decoding options and custom settings.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.BASE64} />
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="space-y-4">
@@ -2242,6 +2431,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Configure Base32 encoding options. Base32 uses a 32-character alphabet (RFC 4648).
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.BASE32} />
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="space-y-4">
@@ -2311,6 +2501,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Configure Base58 encoding options. Base58 avoids ambiguous characters (used in Bitcoin).
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.BASE58} />
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="space-y-4">
@@ -2401,6 +2592,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Configure Base85 encoding options. Base85 is a more compact encoding than Base64.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.BASE85} />
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="space-y-4">
@@ -2483,6 +2675,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Configure hexadecimal encoding/decoding options and format preferences.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.HEX} />
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="space-y-4">
@@ -2594,6 +2787,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Hex to Text decoding converts hexadecimal strings back to their original text format. Accepts hex with or without 0x prefix, and with spaces, colons, or hyphens as separators. No additional configuration needed.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.HEX_TO_TEXT} />
                       </DialogHeader>
                       <DialogFooter>
                         <Button onClick={() => setHexToTextDialogOpen(false)}>
@@ -2626,6 +2820,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           URL encoding converts special characters to percent-encoded format. No additional configuration needed.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.URL_ENCODE} />
                       </DialogHeader>
                       <DialogFooter>
                         <Button variant="outline" onClick={() => setUrlEncodeDialogOpen(false)}>
@@ -2658,6 +2853,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           URL decoding converts percent-encoded characters back to their original format. No additional configuration needed.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.URL_DECODE} />
                       </DialogHeader>
                       <DialogFooter>
                         <Button variant="outline" onClick={() => setUrlDecodeDialogOpen(false)}>
@@ -2690,6 +2886,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           HTML encoding converts special characters to their corresponding HTML entities. For example: &lt; → &amp;lt;, &gt; → &amp;gt;, &amp; → &amp;amp;, " → &amp;quot;. No additional configuration needed.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.HTML_ENCODE} />
                       </DialogHeader>
                       <DialogFooter>
                         <Button onClick={() => setHtmlEncodeDialogOpen(false)}>
@@ -2722,6 +2919,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           HTML decoding converts HTML entities back to their original characters. For example: &amp;lt; → &lt;, &amp;gt; → &gt;, &amp;amp; → &amp;, &amp;quot; → ". No additional configuration needed.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.HTML_DECODE} />
                       </DialogHeader>
                       <DialogFooter>
                         <Button onClick={() => setHtmlDecodeDialogOpen(false)}>
@@ -2754,6 +2952,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Unicode escape encoding converts each character to its Unicode escape sequence in \uXXXX format. For example: A → \u0041, © → \u00a9. No additional configuration needed.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.UNICODE_ESCAPE} />
                       </DialogHeader>
                       <DialogFooter>
                         <Button onClick={() => setUnicodeEscapeDialogOpen(false)}>
@@ -2786,6 +2985,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                         <DialogDescription>
                           Unicode unescape decoding converts Unicode escape sequences back to their original characters. For example: \u0041 → A, \u00a9 → ©. No additional configuration needed.
                         </DialogDescription>
+                        <AlgorithmInfoLink type={TransformationType.UNICODE_UNESCAPE} />
                       </DialogHeader>
                       <DialogFooter>
                         <Button onClick={() => setUnicodeUnescapeDialogOpen(false)}>
