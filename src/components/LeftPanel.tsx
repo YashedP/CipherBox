@@ -176,7 +176,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
   return (
     <div className="w-full md:w-1/2 h-full bg-gray-50 p-6 overflow-y-auto">
       <div className="space-y-6">
-        <Accordion type="multiple" className="w-full" defaultValue={["Classical & Simple Ciphers", "Encoders & Text Utilities", "Symmetric Ciphers", "Hashing & MAC", "Assymetric Ciphers"]}>
+        <Accordion type="multiple" className="w-full" defaultValue={["Classical & Simple Ciphers", "Encoders & Text Utilities", "Symmetric Ciphers", "Hashing & MAC", "Asymmetric Ciphers"]}>
           <AccordionItem value="Classical & Simple Ciphers">
             <AccordionTrigger className="text-[32px] hover:bg-gray-100 hover:text-gray-800 transition-all duration-200 relative">
               Classical & Simple Ciphers
@@ -2033,9 +2033,9 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
               </div>
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="Assymetric Ciphers">
+          <AccordionItem value="Asymmetric Ciphers">
             <AccordionTrigger className="text-[32px] hover:bg-gray-100 hover:text-gray-800 transition-all duration-200 relative">
-              Assymetric Ciphers
+              Asymmetric Ciphers
               <div className="absolute bottom-4 left-0 right-0 h-px bg-gray-300"></div>
             </AccordionTrigger>
             <AccordionContent>
