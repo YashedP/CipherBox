@@ -176,15 +176,15 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
   return (
     <div className="w-full md:w-1/2 h-full bg-gray-50 p-6 overflow-y-auto">
       <div className="space-y-6">
-        <Accordion type="multiple" className="w-full" defaultValue={["transformations"]}>
-          <AccordionItem value="transformations">
+        <Accordion type="multiple" className="w-full" defaultValue={["Classical & Simple Ciphers", "Encoders & Text Utilities", "Symmetric Ciphers", "Hashing & MAC", "Assymetric Ciphers"]}>
+          <AccordionItem value="Classical & Simple Ciphers">
             <AccordionTrigger className="text-[32px] hover:bg-gray-100 hover:text-gray-800 transition-all duration-200 relative">
-              Transformations
+              Classical & Simple Ciphers
               <div className="absolute bottom-4 left-0 right-0 h-px bg-gray-300"></div>
             </AccordionTrigger>
             <AccordionContent>
               <div className="grid grid-cols-3 gap-2">
-                <ButtonGroup className="w-full">
+              <ButtonGroup className="w-full">
                   <Button
                     variant={selectedTransformation === TransformationType.CAESAR ? "default" : "outline"}
                     className="flex-1"
@@ -487,7 +487,17 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                     </DialogContent>
                   </Dialog>
                 </ButtonGroup>
-                <ButtonGroup className="w-full">
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="Encoders & Text Utilities">
+            <AccordionTrigger className="text-[32px] hover:bg-gray-100 hover:text-gray-800 transition-all duration-200 relative">
+              Encoders & Text Utilities
+              <div className="absolute bottom-4 left-0 right-0 h-px bg-gray-300"></div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="grid grid-cols-3 gap-2">
+              <ButtonGroup className="w-full">
                   <Button
                     variant={selectedTransformation === TransformationType.BASE64 ? "default" : "outline"}
                     className="flex-1"
@@ -581,158 +591,6 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                           toast.success("Settings saved!")
                         }}>
                           Apply Settings
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                </ButtonGroup>
-                <ButtonGroup className="w-full">
-                  <Button
-                    variant={selectedTransformation === TransformationType.HEX ? "default" : "outline"}
-                    className="flex-1"
-                    onClick={() => onTransformationChange(TransformationType.HEX)}
-                  >
-                    Hexadecimal
-                  </Button>
-                  <Dialog open={hexDialogOpen} onOpenChange={(open) => {
-                    setHexDialogOpen(open)
-                    if (open) {
-                      setHexForm({
-                        format: options[TransformationType.HEX].format,
-                        separator: options[TransformationType.HEX].separator,
-                        prefix: options[TransformationType.HEX].prefix
-                      })
-                    }
-                  }}>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant={selectedTransformation === TransformationType.HEX ? "default" : "outline"}
-                        size="icon"
-                      >
-                        <Settings className="h-4 w-4" />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[500px]">
-                      <DialogHeader>
-                        <DialogTitle>Hexadecimal Settings</DialogTitle>
-                        <DialogDescription>
-                          Configure hexadecimal encoding/decoding options and format preferences.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="grid gap-4 py-4">
-                        <div className="space-y-4">
-                          <div>
-                            <label className="text-sm font-medium">Format Options</label>
-                            <div className="space-y-2 mt-2">
-                              <label className="flex items-center space-x-2">
-                                <input 
-                                  type="radio" 
-                                  name="hex-format" 
-                                  value="lowercase" 
-                                  checked={hexForm.format === 'lowercase'}
-                                  onChange={(e) => setHexForm(prev => ({ ...prev, format: e.target.value as 'lowercase' | 'uppercase' | 'no-prefix' }))}
-                                />
-                                <span className="text-sm">Lowercase (0x1a2b)</span>
-                              </label>
-                              <label className="flex items-center space-x-2">
-                                <input 
-                                  type="radio" 
-                                  name="hex-format" 
-                                  value="uppercase" 
-                                  checked={hexForm.format === 'uppercase'}
-                                  onChange={(e) => setHexForm(prev => ({ ...prev, format: e.target.value as 'lowercase' | 'uppercase' | 'no-prefix' }))}
-                                />
-                                <span className="text-sm">Uppercase (0x1A2B)</span>
-                              </label>
-                              <label className="flex items-center space-x-2">
-                                <input 
-                                  type="radio" 
-                                  name="hex-format" 
-                                  value="no-prefix" 
-                                  checked={hexForm.format === 'no-prefix'}
-                                  onChange={(e) => setHexForm(prev => ({ ...prev, format: e.target.value as 'lowercase' | 'uppercase' | 'no-prefix' }))}
-                                />
-                                <span className="text-sm">No prefix (1a2b)</span>
-                              </label>
-                            </div>
-                          </div>
-                          <div className="grid grid-cols-4 items-center gap-4">
-                            <label htmlFor="hex-separator" className="text-right">
-                              Separator
-                            </label>
-                            <input
-                              id="hex-separator"
-                              type="text"
-                              placeholder="e.g., : or - (optional)"
-                              value={hexForm.separator}
-                              onChange={(e) => setHexForm(prev => ({ ...prev, separator: e.target.value }))}
-                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                          </div>
-                          <div className="grid grid-cols-4 items-center gap-4">
-                            <label htmlFor="hex-prefix" className="text-right">
-                              Custom Prefix
-                            </label>
-                            <input
-                              id="hex-prefix"
-                              type="text"
-                              placeholder="e.g., 0x, #, or custom"
-                              value={hexForm.prefix}
-                              onChange={(e) => setHexForm(prev => ({ ...prev, prefix: e.target.value }))}
-                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <Button variant="outline" onClick={() => setHexDialogOpen(false)}>
-                          Cancel
-                        </Button>
-                        <Button onClick={() => {
-                          onOptionsChange({
-                            ...options,
-                            [TransformationType.HEX]: {
-                              format: hexForm.format,
-                              separator: hexForm.separator,
-                              prefix: hexForm.prefix
-                            }
-                          })
-                          setHexDialogOpen(false)
-                          toast.success("Settings saved!")
-                        }}>
-                          Apply Settings
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                </ButtonGroup>
-                <ButtonGroup className="w-full">
-                  <Button
-                    variant={selectedTransformation === TransformationType.HEX_TO_TEXT ? "default" : "outline"}
-                    className="flex-1"
-                    onClick={() => onTransformationChange(TransformationType.HEX_TO_TEXT)}
-                  >
-                    Hex to Text
-                  </Button>
-                  <Dialog open={hexToTextDialogOpen} onOpenChange={setHexToTextDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant={selectedTransformation === TransformationType.HEX_TO_TEXT ? "default" : "outline"}
-                        size="icon"
-                      >
-                        <Settings className="h-4 w-4" />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>Hex to Text Settings</DialogTitle>
-                        <DialogDescription>
-                          Hex to Text decoding converts hexadecimal strings back to their original text format. Accepts hex with or without 0x prefix, and with spaces, colons, or hyphens as separators. No additional configuration needed.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <DialogFooter>
-                        <Button onClick={() => setHexToTextDialogOpen(false)}>
-                          Close
                         </Button>
                       </DialogFooter>
                     </DialogContent>
@@ -978,6 +836,360 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                   </Dialog>
                 </ButtonGroup>
                 <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.HEX ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.HEX)}
+                  >
+                    Hexadecimal
+                  </Button>
+                  <Dialog open={hexDialogOpen} onOpenChange={(open) => {
+                    setHexDialogOpen(open)
+                    if (open) {
+                      setHexForm({
+                        format: options[TransformationType.HEX].format,
+                        separator: options[TransformationType.HEX].separator,
+                        prefix: options[TransformationType.HEX].prefix
+                      })
+                    }
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.HEX ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[500px]">
+                      <DialogHeader>
+                        <DialogTitle>Hexadecimal Settings</DialogTitle>
+                        <DialogDescription>
+                          Configure hexadecimal encoding/decoding options and format preferences.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="space-y-4">
+                          <div>
+                            <label className="text-sm font-medium">Format Options</label>
+                            <div className="space-y-2 mt-2">
+                              <label className="flex items-center space-x-2">
+                                <input 
+                                  type="radio" 
+                                  name="hex-format" 
+                                  value="lowercase" 
+                                  checked={hexForm.format === 'lowercase'}
+                                  onChange={(e) => setHexForm(prev => ({ ...prev, format: e.target.value as 'lowercase' | 'uppercase' | 'no-prefix' }))}
+                                />
+                                <span className="text-sm">Lowercase (0x1a2b)</span>
+                              </label>
+                              <label className="flex items-center space-x-2">
+                                <input 
+                                  type="radio" 
+                                  name="hex-format" 
+                                  value="uppercase" 
+                                  checked={hexForm.format === 'uppercase'}
+                                  onChange={(e) => setHexForm(prev => ({ ...prev, format: e.target.value as 'lowercase' | 'uppercase' | 'no-prefix' }))}
+                                />
+                                <span className="text-sm">Uppercase (0x1A2B)</span>
+                              </label>
+                              <label className="flex items-center space-x-2">
+                                <input 
+                                  type="radio" 
+                                  name="hex-format" 
+                                  value="no-prefix" 
+                                  checked={hexForm.format === 'no-prefix'}
+                                  onChange={(e) => setHexForm(prev => ({ ...prev, format: e.target.value as 'lowercase' | 'uppercase' | 'no-prefix' }))}
+                                />
+                                <span className="text-sm">No prefix (1a2b)</span>
+                              </label>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="hex-separator" className="text-right">
+                              Separator
+                            </label>
+                            <input
+                              id="hex-separator"
+                              type="text"
+                              placeholder="e.g., : or - (optional)"
+                              value={hexForm.separator}
+                              onChange={(e) => setHexForm(prev => ({ ...prev, separator: e.target.value }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="hex-prefix" className="text-right">
+                              Custom Prefix
+                            </label>
+                            <input
+                              id="hex-prefix"
+                              type="text"
+                              placeholder="e.g., 0x, #, or custom"
+                              value={hexForm.prefix}
+                              onChange={(e) => setHexForm(prev => ({ ...prev, prefix: e.target.value }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setHexDialogOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button onClick={() => {
+                          onOptionsChange({
+                            ...options,
+                            [TransformationType.HEX]: {
+                              format: hexForm.format,
+                              separator: hexForm.separator,
+                              prefix: hexForm.prefix
+                            }
+                          })
+                          setHexDialogOpen(false)
+                          toast.success("Settings saved!")
+                        }}>
+                          Apply Settings
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.HEX_TO_TEXT ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.HEX_TO_TEXT)}
+                  >
+                    Hex to Text
+                  </Button>
+                  <Dialog open={hexToTextDialogOpen} onOpenChange={setHexToTextDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.HEX_TO_TEXT ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Hex to Text Settings</DialogTitle>
+                        <DialogDescription>
+                          Hex to Text decoding converts hexadecimal strings back to their original text format. Accepts hex with or without 0x prefix, and with spaces, colons, or hyphens as separators. No additional configuration needed.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button onClick={() => setHexToTextDialogOpen(false)}>
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.URL_ENCODE ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.URL_ENCODE)}
+                  >
+                    URL Encode
+                  </Button>
+                  <Dialog open={urlEncodeDialogOpen} onOpenChange={setUrlEncodeDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.URL_ENCODE ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>URL Encode Settings</DialogTitle>
+                        <DialogDescription>
+                          URL encoding converts special characters to percent-encoded format. No additional configuration needed.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setUrlEncodeDialogOpen(false)}>
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.URL_DECODE ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.URL_DECODE)}
+                  >
+                    URL Decode
+                  </Button>
+                  <Dialog open={urlDecodeDialogOpen} onOpenChange={setUrlDecodeDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.URL_DECODE ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>URL Decode Settings</DialogTitle>
+                        <DialogDescription>
+                          URL decoding converts percent-encoded characters back to their original format. No additional configuration needed.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setUrlDecodeDialogOpen(false)}>
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.HTML_ENCODE ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.HTML_ENCODE)}
+                  >
+                    HTML Encode
+                  </Button>
+                  <Dialog open={htmlEncodeDialogOpen} onOpenChange={setHtmlEncodeDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.HTML_ENCODE ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>HTML Encode Settings</DialogTitle>
+                        <DialogDescription>
+                          HTML encoding converts special characters to their corresponding HTML entities. For example: &lt; → &amp;lt;, &gt; → &amp;gt;, &amp; → &amp;amp;, " → &amp;quot;. No additional configuration needed.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button onClick={() => setHtmlEncodeDialogOpen(false)}>
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.HTML_DECODE ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.HTML_DECODE)}
+                  >
+                    HTML Decode
+                  </Button>
+                  <Dialog open={htmlDecodeDialogOpen} onOpenChange={setHtmlDecodeDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.HTML_DECODE ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>HTML Decode Settings</DialogTitle>
+                        <DialogDescription>
+                          HTML decoding converts HTML entities back to their original characters. For example: &amp;lt; → &lt;, &amp;gt; → &gt;, &amp;amp; → &amp;, &amp;quot; → ". No additional configuration needed.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button onClick={() => setHtmlDecodeDialogOpen(false)}>
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.UNICODE_ESCAPE ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.UNICODE_ESCAPE)}
+                  >
+                    Unicode Escape
+                  </Button>
+                  <Dialog open={unicodeEscapeDialogOpen} onOpenChange={setUnicodeEscapeDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.UNICODE_ESCAPE ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Unicode Escape Settings</DialogTitle>
+                        <DialogDescription>
+                          Unicode escape encoding converts each character to its Unicode escape sequence in \uXXXX format. For example: A → \u0041, © → \u00a9. No additional configuration needed.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button onClick={() => setUnicodeEscapeDialogOpen(false)}>
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.UNICODE_UNESCAPE ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.UNICODE_UNESCAPE)}
+                  >
+                    Unicode Unescape
+                  </Button>
+                  <Dialog open={unicodeUnescapeDialogOpen} onOpenChange={setUnicodeUnescapeDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.UNICODE_UNESCAPE ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Unicode Unescape Settings</DialogTitle>
+                        <DialogDescription>
+                          Unicode unescape decoding converts Unicode escape sequences back to their original characters. For example: \u0041 → A, \u00a9 → ©. No additional configuration needed.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button onClick={() => setUnicodeUnescapeDialogOpen(false)}>
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="Symmetric Ciphers">
+            <AccordionTrigger className="text-[32px] hover:bg-gray-100 hover:text-gray-800 transition-all duration-200 relative">
+              Symmetric Ciphers
+              <div className="absolute bottom-4 left-0 right-0 h-px bg-gray-300"></div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="grid grid-cols-3 gap-2">
+              <ButtonGroup className="w-full">
                   <Button
                     variant={selectedTransformation === TransformationType.RC4 ? "default" : "outline"}
                     className="flex-1"
@@ -1492,199 +1704,17 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                     </DialogContent>
                   </Dialog>
                 </ButtonGroup>
-                <ButtonGroup className="w-full">
-                  <Button
-                    variant={selectedTransformation === TransformationType.URL_ENCODE ? "default" : "outline"}
-                    className="flex-1"
-                    onClick={() => onTransformationChange(TransformationType.URL_ENCODE)}
-                  >
-                    URL Encode
-                  </Button>
-                  <Dialog open={urlEncodeDialogOpen} onOpenChange={setUrlEncodeDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant={selectedTransformation === TransformationType.URL_ENCODE ? "default" : "outline"}
-                        size="icon"
-                      >
-                        <Settings className="h-4 w-4" />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>URL Encode Settings</DialogTitle>
-                        <DialogDescription>
-                          URL encoding converts special characters to percent-encoded format. No additional configuration needed.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <DialogFooter>
-                        <Button variant="outline" onClick={() => setUrlEncodeDialogOpen(false)}>
-                          Close
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                </ButtonGroup>
-                <ButtonGroup className="w-full">
-                  <Button
-                    variant={selectedTransformation === TransformationType.URL_DECODE ? "default" : "outline"}
-                    className="flex-1"
-                    onClick={() => onTransformationChange(TransformationType.URL_DECODE)}
-                  >
-                    URL Decode
-                  </Button>
-                  <Dialog open={urlDecodeDialogOpen} onOpenChange={setUrlDecodeDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant={selectedTransformation === TransformationType.URL_DECODE ? "default" : "outline"}
-                        size="icon"
-                      >
-                        <Settings className="h-4 w-4" />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>URL Decode Settings</DialogTitle>
-                        <DialogDescription>
-                          URL decoding converts percent-encoded characters back to their original format. No additional configuration needed.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <DialogFooter>
-                        <Button variant="outline" onClick={() => setUrlDecodeDialogOpen(false)}>
-                          Close
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                </ButtonGroup>
-                <ButtonGroup className="w-full">
-                  <Button
-                    variant={selectedTransformation === TransformationType.HTML_ENCODE ? "default" : "outline"}
-                    className="flex-1"
-                    onClick={() => onTransformationChange(TransformationType.HTML_ENCODE)}
-                  >
-                    HTML Encode
-                  </Button>
-                  <Dialog open={htmlEncodeDialogOpen} onOpenChange={setHtmlEncodeDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant={selectedTransformation === TransformationType.HTML_ENCODE ? "default" : "outline"}
-                        size="icon"
-                      >
-                        <Settings className="h-4 w-4" />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>HTML Encode Settings</DialogTitle>
-                        <DialogDescription>
-                          HTML encoding converts special characters to their corresponding HTML entities. For example: &lt; → &amp;lt;, &gt; → &amp;gt;, &amp; → &amp;amp;, " → &amp;quot;. No additional configuration needed.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <DialogFooter>
-                        <Button onClick={() => setHtmlEncodeDialogOpen(false)}>
-                          Close
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                </ButtonGroup>
-                <ButtonGroup className="w-full">
-                  <Button
-                    variant={selectedTransformation === TransformationType.HTML_DECODE ? "default" : "outline"}
-                    className="flex-1"
-                    onClick={() => onTransformationChange(TransformationType.HTML_DECODE)}
-                  >
-                    HTML Decode
-                  </Button>
-                  <Dialog open={htmlDecodeDialogOpen} onOpenChange={setHtmlDecodeDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant={selectedTransformation === TransformationType.HTML_DECODE ? "default" : "outline"}
-                        size="icon"
-                      >
-                        <Settings className="h-4 w-4" />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>HTML Decode Settings</DialogTitle>
-                        <DialogDescription>
-                          HTML decoding converts HTML entities back to their original characters. For example: &amp;lt; → &lt;, &amp;gt; → &gt;, &amp;amp; → &amp;, &amp;quot; → ". No additional configuration needed.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <DialogFooter>
-                        <Button onClick={() => setHtmlDecodeDialogOpen(false)}>
-                          Close
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                </ButtonGroup>
-                <ButtonGroup className="w-full">
-                  <Button
-                    variant={selectedTransformation === TransformationType.UNICODE_ESCAPE ? "default" : "outline"}
-                    className="flex-1"
-                    onClick={() => onTransformationChange(TransformationType.UNICODE_ESCAPE)}
-                  >
-                    Unicode Escape
-                  </Button>
-                  <Dialog open={unicodeEscapeDialogOpen} onOpenChange={setUnicodeEscapeDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant={selectedTransformation === TransformationType.UNICODE_ESCAPE ? "default" : "outline"}
-                        size="icon"
-                      >
-                        <Settings className="h-4 w-4" />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>Unicode Escape Settings</DialogTitle>
-                        <DialogDescription>
-                          Unicode escape encoding converts each character to its Unicode escape sequence in \uXXXX format. For example: A → \u0041, © → \u00a9. No additional configuration needed.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <DialogFooter>
-                        <Button onClick={() => setUnicodeEscapeDialogOpen(false)}>
-                          Close
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                </ButtonGroup>
-                <ButtonGroup className="w-full">
-                  <Button
-                    variant={selectedTransformation === TransformationType.UNICODE_UNESCAPE ? "default" : "outline"}
-                    className="flex-1"
-                    onClick={() => onTransformationChange(TransformationType.UNICODE_UNESCAPE)}
-                  >
-                    Unicode Unescape
-                  </Button>
-                  <Dialog open={unicodeUnescapeDialogOpen} onOpenChange={setUnicodeUnescapeDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant={selectedTransformation === TransformationType.UNICODE_UNESCAPE ? "default" : "outline"}
-                        size="icon"
-                      >
-                        <Settings className="h-4 w-4" />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>Unicode Unescape Settings</DialogTitle>
-                        <DialogDescription>
-                          Unicode unescape decoding converts Unicode escape sequences back to their original characters. For example: \u0041 → A, \u00a9 → ©. No additional configuration needed.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <DialogFooter>
-                        <Button onClick={() => setUnicodeUnescapeDialogOpen(false)}>
-                          Close
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                </ButtonGroup>
-                <ButtonGroup className="w-full">
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="Hashing & MAC">
+            <AccordionTrigger className="text-[32px] hover:bg-gray-100 hover:text-gray-800 transition-all duration-200 relative">
+              Hashing & MAC
+              <div className="absolute bottom-4 left-0 right-0 h-px bg-gray-300"></div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="grid grid-cols-3 gap-2">
+              <ButtonGroup className="w-full">
                   <Button
                     variant={selectedTransformation === TransformationType.MD5 ? "default" : "outline"}
                     className="flex-1"
@@ -1882,7 +1912,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                     className="flex-1"
                     onClick={() => onTransformationChange(TransformationType.BLAKE2B)}
                   >
-                    BLAKE2b
+                    BLAKE2B
                   </Button>
                   <Dialog open={blake2bDialogOpen} onOpenChange={setBlake2bDialogOpen}>
                     <DialogTrigger asChild>
@@ -1895,9 +1925,9 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">
                       <DialogHeader>
-                        <DialogTitle>BLAKE2b Settings</DialogTitle>
+                        <DialogTitle>BLAKE2B Settings</DialogTitle>
                         <DialogDescription>
-                          BLAKE2b is a fast cryptographic hash function, faster than MD5, SHA-1, and SHA-2 while being at least as secure as SHA-3. No additional configuration needed.
+                          BLAKE2B is a fast cryptographic hash function, faster than MD5, SHA-1, and SHA-2 while being at least as secure as SHA-3. No additional configuration needed.
                         </DialogDescription>
                       </DialogHeader>
                       <DialogFooter>
@@ -2000,6 +2030,16 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                     </DialogContent>
                   </Dialog>
                 </ButtonGroup>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="Assymetric Ciphers">
+            <AccordionTrigger className="text-[32px] hover:bg-gray-100 hover:text-gray-800 transition-all duration-200 relative">
+              Assymetric Ciphers
+              <div className="absolute bottom-4 left-0 right-0 h-px bg-gray-300"></div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="grid grid-cols-3 gap-2">
                 <ButtonGroup className="w-full">
                   <Button
                     variant={selectedTransformation === TransformationType.RSA_ENCRYPT ? "default" : "outline"}

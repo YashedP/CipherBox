@@ -808,7 +808,7 @@ const blake2bTransformation = (text: string): string => {
 		const hashArray: number[] = Array.from(hash)
 		return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('')
 	} catch (error) {
-		return 'Error: BLAKE2b hashing failed - ' + (error as Error).message
+		return 'Error: BLAKE2B hashing failed - ' + (error as Error).message
 	}
 }
 
