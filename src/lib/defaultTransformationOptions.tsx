@@ -60,4 +60,15 @@ export const defaultTransformationOptions: TransformOptionsMap = {
         nonce: '000000000000000000000000',
         outputFormat: 'hex'
     },
+    [TransformationType.MD5]: {},
+    [TransformationType.SHA1]: {},
+    [TransformationType.SHA256]: {},
+    [TransformationType.SHA384]: {},
+    [TransformationType.SHA512]: {},
+    [TransformationType.SHA3_256]: {},
+    [TransformationType.BLAKE2B]: {},
+    [TransformationType.HMAC]: {
+        key: 'secret-key',
+        algorithm: 'SHA256'
+    },
 }

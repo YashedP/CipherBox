@@ -48,6 +48,14 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
   const [unicodeEscapeDialogOpen, setUnicodeEscapeDialogOpen] = useState(false)
   const [unicodeUnescapeDialogOpen, setUnicodeUnescapeDialogOpen] = useState(false)
   const [chacha20DialogOpen, setChacha20DialogOpen] = useState(false)
+  const [md5DialogOpen, setMd5DialogOpen] = useState(false)
+  const [sha1DialogOpen, setSha1DialogOpen] = useState(false)
+  const [sha256DialogOpen, setSha256DialogOpen] = useState(false)
+  const [sha384DialogOpen, setSha384DialogOpen] = useState(false)
+  const [sha512DialogOpen, setSha512DialogOpen] = useState(false)
+  const [sha3_256DialogOpen, setSha3_256DialogOpen] = useState(false)
+  const [blake2bDialogOpen, setBlake2bDialogOpen] = useState(false)
+  const [hmacDialogOpen, setHmacDialogOpen] = useState(false)
   
   const [caesarForm, setCaesarForm] = useState({
     shift: options[TransformationType.CAESAR].shift
@@ -110,6 +118,11 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
     key: options[TransformationType.CHACHA20].key,
     nonce: options[TransformationType.CHACHA20].nonce,
     outputFormat: options[TransformationType.CHACHA20].outputFormat
+  })
+  
+  const [hmacForm, setHmacForm] = useState({
+    key: options[TransformationType.HMAC].key,
+    algorithm: options[TransformationType.HMAC].algorithm
   })
   
   return (
@@ -1618,6 +1631,322 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                       <DialogFooter>
                         <Button onClick={() => setUnicodeUnescapeDialogOpen(false)}>
                           Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.MD5 ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.MD5)}
+                  >
+                    MD5
+                  </Button>
+                  <Dialog open={md5DialogOpen} onOpenChange={setMd5DialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.MD5 ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>MD5 Settings</DialogTitle>
+                        <DialogDescription>
+                          MD5 produces a 128-bit hash. WARNING: MD5 is cryptographically broken and should only be used for non-security purposes like checksums. No additional configuration needed.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button onClick={() => setMd5DialogOpen(false)}>
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.SHA1 ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.SHA1)}
+                  >
+                    SHA1
+                  </Button>
+                  <Dialog open={sha1DialogOpen} onOpenChange={setSha1DialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.SHA1 ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>SHA1 Settings</DialogTitle>
+                        <DialogDescription>
+                          SHA1 produces a 160-bit hash. WARNING: SHA1 is deprecated due to collision attacks and should not be used for security purposes. No additional configuration needed.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button onClick={() => setSha1DialogOpen(false)}>
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.SHA256 ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.SHA256)}
+                  >
+                    SHA256
+                  </Button>
+                  <Dialog open={sha256DialogOpen} onOpenChange={setSha256DialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.SHA256 ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>SHA256 Settings</DialogTitle>
+                        <DialogDescription>
+                          SHA256 produces a 256-bit hash from the SHA-2 family. Widely used and secure for cryptographic purposes. No additional configuration needed.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button onClick={() => setSha256DialogOpen(false)}>
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.SHA384 ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.SHA384)}
+                  >
+                    SHA384
+                  </Button>
+                  <Dialog open={sha384DialogOpen} onOpenChange={setSha384DialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.SHA384 ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>SHA384 Settings</DialogTitle>
+                        <DialogDescription>
+                          SHA384 produces a 384-bit hash from the SHA-2 family. Provides additional security margin over SHA256. No additional configuration needed.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button onClick={() => setSha384DialogOpen(false)}>
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.SHA512 ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.SHA512)}
+                  >
+                    SHA512
+                  </Button>
+                  <Dialog open={sha512DialogOpen} onOpenChange={setSha512DialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.SHA512 ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>SHA512 Settings</DialogTitle>
+                        <DialogDescription>
+                          SHA512 produces a 512-bit hash from the SHA-2 family. Offers maximum security margin in the SHA-2 family. No additional configuration needed.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button onClick={() => setSha512DialogOpen(false)}>
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.SHA3_256 ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.SHA3_256)}
+                  >
+                    SHA3-256
+                  </Button>
+                  <Dialog open={sha3_256DialogOpen} onOpenChange={setSha3_256DialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.SHA3_256 ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>SHA3-256 Settings</DialogTitle>
+                        <DialogDescription>
+                          SHA3-256 produces a 256-bit hash from the SHA-3 (Keccak) family. Modern alternative to SHA-2 with different design. No additional configuration needed.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button onClick={() => setSha3_256DialogOpen(false)}>
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.BLAKE2B ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.BLAKE2B)}
+                  >
+                    BLAKE2b
+                  </Button>
+                  <Dialog open={blake2bDialogOpen} onOpenChange={setBlake2bDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.BLAKE2B ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>BLAKE2b Settings</DialogTitle>
+                        <DialogDescription>
+                          BLAKE2b is a fast cryptographic hash function, faster than MD5, SHA-1, and SHA-2 while being at least as secure as SHA-3. No additional configuration needed.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button onClick={() => setBlake2bDialogOpen(false)}>
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.HMAC ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.HMAC)}
+                  >
+                    HMAC
+                  </Button>
+                  <Dialog open={hmacDialogOpen} onOpenChange={(open) => {
+                    setHmacDialogOpen(open)
+                    if (open) {
+                      setHmacForm({
+                        key: options[TransformationType.HMAC].key,
+                        algorithm: options[TransformationType.HMAC].algorithm
+                      })
+                    }
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.HMAC ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[500px]">
+                      <DialogHeader>
+                        <DialogTitle>HMAC Settings</DialogTitle>
+                        <DialogDescription>
+                          Hash-based Message Authentication Code (HMAC) uses a secret key with a hash function to verify data integrity and authenticity.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="hmac-key" className="text-right">
+                              Secret Key
+                            </label>
+                            <input
+                              id="hmac-key"
+                              type="text"
+                              placeholder="Enter secret key"
+                              value={hmacForm.key}
+                              onChange={(e) => setHmacForm(prev => ({ ...prev, key: e.target.value }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="hmac-algorithm" className="text-right">
+                              Algorithm
+                            </label>
+                            <select
+                              id="hmac-algorithm"
+                              value={hmacForm.algorithm}
+                              onChange={(e) => setHmacForm(prev => ({ ...prev, algorithm: e.target.value as 'MD5' | 'SHA1' | 'SHA256' | 'SHA384' | 'SHA512' }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="MD5">MD5</option>
+                              <option value="SHA1">SHA1</option>
+                              <option value="SHA256">SHA256</option>
+                              <option value="SHA384">SHA384</option>
+                              <option value="SHA512">SHA512</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setHmacDialogOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button onClick={() => {
+                          if (!hmacForm.key || hmacForm.key.trim() === '') {
+                            toast.error("Secret key must not be empty")
+                            return
+                          }
+                          
+                          onOptionsChange({
+                            ...options,
+                            [TransformationType.HMAC]: {
+                              key: hmacForm.key,
+                              algorithm: hmacForm.algorithm
+                            }
+                          })
+                          setHmacDialogOpen(false)
+                          toast.success("Settings saved!")
+                        }}>
+                          Apply Settings
                         </Button>
                       </DialogFooter>
                     </DialogContent>

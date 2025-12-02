@@ -6,6 +6,7 @@ import { encode as base85Encode } from 'base85'
 import { encode as htmlEncode, decode as htmlDecode } from 'html-entities'
 import { chacha20 } from '@noble/ciphers/chacha.js'
 import { hexToBytes, bytesToHex } from '@noble/ciphers/utils.js'
+import { blake2b } from '@noble/hashes/blake2.js'
 
 export const TransformationType = {
     NO_TRANSFORMATION: -1,
@@ -29,6 +30,14 @@ export const TransformationType = {
     UNICODE_ESCAPE: 17,
     UNICODE_UNESCAPE: 18,
     CHACHA20: 19,
+    MD5: 20,
+    SHA1: 21,
+    SHA256: 22,
+    SHA384: 23,
+    SHA512: 24,
+    SHA3_256: 25,
+    BLAKE2B: 26,
+    HMAC: 27,
 } as const;
 
 export type TransformationType = typeof TransformationType[keyof typeof TransformationType];
@@ -84,6 +93,10 @@ type ChaCha20Options = {
 	nonce?: string,
 	outputFormat?: 'hex' | 'base64'
 }
+type HMACOptions = {
+	key?: string,
+	algorithm?: 'MD5' | 'SHA1' | 'SHA256' | 'SHA384' | 'SHA512'
+}
 
 export type TransformOptionsMap = {
 	[TransformationType.NO_TRANSFORMATION]: NoOptions
@@ -107,6 +120,14 @@ export type TransformOptionsMap = {
 	[TransformationType.UNICODE_ESCAPE]: NoOptions
 	[TransformationType.UNICODE_UNESCAPE]: NoOptions
 	[TransformationType.CHACHA20]: ChaCha20Options
+	[TransformationType.MD5]: NoOptions
+	[TransformationType.SHA1]: NoOptions
+	[TransformationType.SHA256]: NoOptions
+	[TransformationType.SHA384]: NoOptions
+	[TransformationType.SHA512]: NoOptions
+	[TransformationType.SHA3_256]: NoOptions
+	[TransformationType.BLAKE2B]: NoOptions
+	[TransformationType.HMAC]: HMACOptions
 }
 
 type TransformOptions<T extends TransformationType> = TransformOptionsMap[T]
@@ -132,6 +153,14 @@ const htmlDecodeFunc = (text: string, _opts: NoOptions): string => htmlDecodeTra
 const unicodeEscapeFunc = (text: string, _opts: NoOptions): string => unicodeEscapeTransformation(text)
 const unicodeUnescapeFunc = (text: string, _opts: NoOptions): string => unicodeUnescapeTransformation(text)
 const chacha20Func = (text: string, opts: ChaCha20Options): string => chacha20Transformation(text, opts)
+const md5Func = (text: string, _opts: NoOptions): string => md5Transformation(text)
+const sha1Func = (text: string, _opts: NoOptions): string => sha1Transformation(text)
+const sha256Func = (text: string, _opts: NoOptions): string => sha256Transformation(text)
+const sha384Func = (text: string, _opts: NoOptions): string => sha384Transformation(text)
+const sha512Func = (text: string, _opts: NoOptions): string => sha512Transformation(text)
+const sha3_256Func = (text: string, _opts: NoOptions): string => sha3_256Transformation(text)
+const blake2bFunc = (text: string, _opts: NoOptions): string => blake2bTransformation(text)
+const hmacFunc = (text: string, opts: HMACOptions): string => hmacTransformation(text, opts)
 
 const transformationFunctions = {
 	[TransformationType.NO_TRANSFORMATION]: noTransformation,
@@ -155,6 +184,14 @@ const transformationFunctions = {
 	[TransformationType.UNICODE_ESCAPE]: unicodeEscapeFunc,
 	[TransformationType.UNICODE_UNESCAPE]: unicodeUnescapeFunc,
 	[TransformationType.CHACHA20]: chacha20Func,
+	[TransformationType.MD5]: md5Func,
+	[TransformationType.SHA1]: sha1Func,
+	[TransformationType.SHA256]: sha256Func,
+	[TransformationType.SHA384]: sha384Func,
+	[TransformationType.SHA512]: sha512Func,
+	[TransformationType.SHA3_256]: sha3_256Func,
+	[TransformationType.BLAKE2B]: blake2bFunc,
+	[TransformationType.HMAC]: hmacFunc,
 } as const
 
 export function transformText<T extends TransformationType>(text: string, type: T, options?: TransformOptions<T>): string {
@@ -639,5 +676,95 @@ const chacha20Transformation = (text: string, opts: ChaCha20Options): string => 
 		}
 	} catch (error) {
 		return 'Error: ChaCha20 encryption failed - ' + (error as Error).message
+	}
+}
+
+const md5Transformation = (text: string): string => {
+	try {
+		return CryptoJS.MD5(text).toString()
+	} catch (error) {
+		return 'Error: MD5 hashing failed - ' + (error as Error).message
+	}
+}
+
+const sha1Transformation = (text: string): string => {
+	try {
+		return CryptoJS.SHA1(text).toString()
+	} catch (error) {
+		return 'Error: SHA1 hashing failed - ' + (error as Error).message
+	}
+}
+
+const sha256Transformation = (text: string): string => {
+	try {
+		return CryptoJS.SHA256(text).toString()
+	} catch (error) {
+		return 'Error: SHA256 hashing failed - ' + (error as Error).message
+	}
+}
+
+const sha384Transformation = (text: string): string => {
+	try {
+		return CryptoJS.SHA384(text).toString()
+	} catch (error) {
+		return 'Error: SHA384 hashing failed - ' + (error as Error).message
+	}
+}
+
+const sha512Transformation = (text: string): string => {
+	try {
+		return CryptoJS.SHA512(text).toString()
+	} catch (error) {
+		return 'Error: SHA512 hashing failed - ' + (error as Error).message
+	}
+}
+
+const sha3_256Transformation = (text: string): string => {
+	try {
+		return CryptoJS.SHA3(text, { outputLength: 256 }).toString()
+	} catch (error) {
+		return 'Error: SHA3-256 hashing failed - ' + (error as Error).message
+	}
+}
+
+const blake2bTransformation = (text: string): string => {
+	try {
+		// Convert text to bytes
+		const textEncoder = new TextEncoder()
+		const textBytes = textEncoder.encode(text)
+		
+		// Hash using BLAKE2b
+		const hash = blake2b(textBytes)
+		
+		// Convert to hex string
+		const hashArray: number[] = Array.from(hash)
+		return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('')
+	} catch (error) {
+		return 'Error: BLAKE2b hashing failed - ' + (error as Error).message
+	}
+}
+
+const hmacTransformation = (text: string, opts: HMACOptions): string => {
+	try {
+		const key = opts.key || 'secret-key'
+		const algorithm = opts.algorithm || 'SHA256'
+		
+		// Use crypto-js HMAC functions based on selected algorithm
+		switch (algorithm) {
+			case 'MD5':
+				return CryptoJS.HmacMD5(text, key).toString()
+			case 'SHA1':
+				return CryptoJS.HmacSHA1(text, key).toString()
+			case 'SHA256':
+				return CryptoJS.HmacSHA256(text, key).toString()
+			case 'SHA384':
+				return CryptoJS.HmacSHA384(text, key).toString()
+			case 'SHA512':
+				return CryptoJS.HmacSHA512(text, key).toString()
+			default:
+				return CryptoJS.HmacSHA256(text, key).toString()
+		}
+	} catch (error) {
+		return 'Error: HMAC generation failed - ' + (error as Error).message
 	}
 }

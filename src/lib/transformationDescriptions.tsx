@@ -22,6 +22,14 @@ export const transformationDescriptions = {
 	[TransformationType.UNICODE_ESCAPE]: 'Convert characters to Unicode escape sequences (\\uXXXX)',
 	[TransformationType.UNICODE_UNESCAPE]: 'Convert Unicode escape sequences back to characters',
 	[TransformationType.CHACHA20]: 'Modern stream cipher with 256-bit key; faster than AES on systems without hardware acceleration',
+	[TransformationType.MD5]: '128-bit hash (cryptographically broken, use for non-security purposes only)',
+	[TransformationType.SHA1]: '160-bit hash (deprecated due to collision attacks)',
+	[TransformationType.SHA256]: '256-bit hash from SHA-2 family (widely used and secure)',
+	[TransformationType.SHA384]: '384-bit hash from SHA-2 family',
+	[TransformationType.SHA512]: '512-bit hash from SHA-2 family',
+	[TransformationType.SHA3_256]: '256-bit hash from SHA-3 (Keccak) family',
+	[TransformationType.BLAKE2B]: 'Fast cryptographic hash function, faster than MD5/SHA-1/SHA-2',
+	[TransformationType.HMAC]: 'Hash-based Message Authentication Code with selectable algorithm',
 } as const
 
 // Get transformation description using array index
