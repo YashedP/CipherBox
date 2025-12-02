@@ -50,4 +50,9 @@ export const defaultTransformationOptions: TransformOptionsMap = {
         variant: 'ascii85'
     },
     [TransformationType.HEX_TO_TEXT]: {},
+    [TransformationType.ROT13]: {},
+    [TransformationType.HTML_ENCODE]: {},
+    [TransformationType.HTML_DECODE]: {},
+    [TransformationType.UNICODE_ESCAPE]: {},
+    [TransformationType.UNICODE_UNESCAPE]: {},
 }

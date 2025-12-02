@@ -42,6 +42,11 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
   const [base58DialogOpen, setBase58DialogOpen] = useState(false)
   const [base85DialogOpen, setBase85DialogOpen] = useState(false)
   const [hexToTextDialogOpen, setHexToTextDialogOpen] = useState(false)
+  const [rot13DialogOpen, setRot13DialogOpen] = useState(false)
+  const [htmlEncodeDialogOpen, setHtmlEncodeDialogOpen] = useState(false)
+  const [htmlDecodeDialogOpen, setHtmlDecodeDialogOpen] = useState(false)
+  const [unicodeEscapeDialogOpen, setUnicodeEscapeDialogOpen] = useState(false)
+  const [unicodeUnescapeDialogOpen, setUnicodeUnescapeDialogOpen] = useState(false)
   
   const [caesarForm, setCaesarForm] = useState({
     shift: options[TransformationType.CAESAR].shift
@@ -377,6 +382,38 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                           toast.success("Settings saved!")
                         }}>
                           Apply Settings
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.ROT13 ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.ROT13)}
+                  >
+                    ROT13
+                  </Button>
+                  <Dialog open={rot13DialogOpen} onOpenChange={setRot13DialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.ROT13 ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>ROT13 Settings</DialogTitle>
+                        <DialogDescription>
+                          ROT13 is a simple letter substitution cipher that shifts each letter by 13 positions in the alphabet. It is self-inverse, meaning applying ROT13 twice returns the original text. No additional configuration needed.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button onClick={() => setRot13DialogOpen(false)}>
+                          Close
                         </Button>
                       </DialogFooter>
                     </DialogContent>
@@ -1324,6 +1361,134 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                       </DialogHeader>
                       <DialogFooter>
                         <Button variant="outline" onClick={() => setUrlDecodeDialogOpen(false)}>
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.HTML_ENCODE ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.HTML_ENCODE)}
+                  >
+                    HTML Encode
+                  </Button>
+                  <Dialog open={htmlEncodeDialogOpen} onOpenChange={setHtmlEncodeDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.HTML_ENCODE ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>HTML Encode Settings</DialogTitle>
+                        <DialogDescription>
+                          HTML encoding converts special characters to their corresponding HTML entities. For example: &lt; → &amp;lt;, &gt; → &amp;gt;, &amp; → &amp;amp;, " → &amp;quot;. No additional configuration needed.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button onClick={() => setHtmlEncodeDialogOpen(false)}>
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.HTML_DECODE ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.HTML_DECODE)}
+                  >
+                    HTML Decode
+                  </Button>
+                  <Dialog open={htmlDecodeDialogOpen} onOpenChange={setHtmlDecodeDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.HTML_DECODE ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>HTML Decode Settings</DialogTitle>
+                        <DialogDescription>
+                          HTML decoding converts HTML entities back to their original characters. For example: &amp;lt; → &lt;, &amp;gt; → &gt;, &amp;amp; → &amp;, &amp;quot; → ". No additional configuration needed.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button onClick={() => setHtmlDecodeDialogOpen(false)}>
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.UNICODE_ESCAPE ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.UNICODE_ESCAPE)}
+                  >
+                    Unicode Escape
+                  </Button>
+                  <Dialog open={unicodeEscapeDialogOpen} onOpenChange={setUnicodeEscapeDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.UNICODE_ESCAPE ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Unicode Escape Settings</DialogTitle>
+                        <DialogDescription>
+                          Unicode escape encoding converts each character to its Unicode escape sequence in \uXXXX format. For example: A → \u0041, © → \u00a9. No additional configuration needed.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button onClick={() => setUnicodeEscapeDialogOpen(false)}>
+                          Close
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.UNICODE_UNESCAPE ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.UNICODE_UNESCAPE)}
+                  >
+                    Unicode Unescape
+                  </Button>
+                  <Dialog open={unicodeUnescapeDialogOpen} onOpenChange={setUnicodeUnescapeDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.UNICODE_UNESCAPE ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Unicode Unescape Settings</DialogTitle>
+                        <DialogDescription>
+                          Unicode unescape decoding converts Unicode escape sequences back to their original characters. For example: \u0041 → A, \u00a9 → ©. No additional configuration needed.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button onClick={() => setUnicodeUnescapeDialogOpen(false)}>
                           Close
                         </Button>
                       </DialogFooter>

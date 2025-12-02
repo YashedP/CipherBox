@@ -3,6 +3,7 @@ import * as base32 from 'hi-base32'
 import bs58 from 'bs58'
 import baseX from 'base-x'
 import { encode as base85Encode } from 'base85'
+import { encode as htmlEncode, decode as htmlDecode } from 'html-entities'
 
 export const TransformationType = {
     NO_TRANSFORMATION: -1,
@@ -20,6 +21,11 @@ export const TransformationType = {
     BASE58: 11,
     BASE85: 12,
     HEX_TO_TEXT: 13,
+    ROT13: 14,
+    HTML_ENCODE: 15,
+    HTML_DECODE: 16,
+    UNICODE_ESCAPE: 17,
+    UNICODE_UNESCAPE: 18,
 } as const;
 
 export type TransformationType = typeof TransformationType[keyof typeof TransformationType];
@@ -87,6 +93,11 @@ export type TransformOptionsMap = {
 	[TransformationType.BASE58]: Base58Options
 	[TransformationType.BASE85]: Base85Options
 	[TransformationType.HEX_TO_TEXT]: NoOptions
+	[TransformationType.ROT13]: NoOptions
+	[TransformationType.HTML_ENCODE]: NoOptions
+	[TransformationType.HTML_DECODE]: NoOptions
+	[TransformationType.UNICODE_ESCAPE]: NoOptions
+	[TransformationType.UNICODE_UNESCAPE]: NoOptions
 }
 
 type TransformOptions<T extends TransformationType> = TransformOptionsMap[T]
@@ -106,6 +117,11 @@ const base32Func = (text: string, opts: Base32Options): string => base32Transfor
 const base58Func = (text: string, opts: Base58Options): string => base58Transformation(text, opts)
 const base85Func = (text: string, opts: Base85Options): string => base85Transformation(text, opts)
 const hexToTextFunc = (text: string, _opts: NoOptions): string => hexToTextTransformation(text)
+const rot13Func = (text: string, _opts: NoOptions): string => rot13Transformation(text)
+const htmlEncodeFunc = (text: string, _opts: NoOptions): string => htmlEncodeTransformation(text)
+const htmlDecodeFunc = (text: string, _opts: NoOptions): string => htmlDecodeTransformation(text)
+const unicodeEscapeFunc = (text: string, _opts: NoOptions): string => unicodeEscapeTransformation(text)
+const unicodeUnescapeFunc = (text: string, _opts: NoOptions): string => unicodeUnescapeTransformation(text)
 
 const transformationFunctions = {
 	[TransformationType.NO_TRANSFORMATION]: noTransformation,
@@ -123,6 +139,11 @@ const transformationFunctions = {
 	[TransformationType.BASE58]: base58Func,
 	[TransformationType.BASE85]: base85Func,
 	[TransformationType.HEX_TO_TEXT]: hexToTextFunc,
+	[TransformationType.ROT13]: rot13Func,
+	[TransformationType.HTML_ENCODE]: htmlEncodeFunc,
+	[TransformationType.HTML_DECODE]: htmlDecodeFunc,
+	[TransformationType.UNICODE_ESCAPE]: unicodeEscapeFunc,
+	[TransformationType.UNICODE_UNESCAPE]: unicodeUnescapeFunc,
 } as const
 
 export function transformText<T extends TransformationType>(text: string, type: T, options?: TransformOptions<T>): string {
@@ -524,5 +545,58 @@ const hexToTextTransformation = (text: string): string => {
 		return result
 	} catch (error) {
 		return 'Error: Hex to text conversion failed - ' + (error as Error).message
+	}
+}
+
+const rot13Transformation = (text: string): string => {
+	try {
+		// ROT13: shift each letter by 13 positions (self-inverse)
+		return text.replace(/[a-zA-Z]/g, (char) => {
+			const base = char <= 'Z' ? 65 : 97
+			return String.fromCharCode(((char.charCodeAt(0) - base + 13) % 26) + base)
+		})
+	} catch (error) {
+		return 'Error: ROT13 transformation failed - ' + (error as Error).message
+	}
+}
+
+const htmlEncodeTransformation = (text: string): string => {
+	try {
+		// Encode special characters to HTML entities
+		return htmlEncode(text)
+	} catch (error) {
+		return 'Error: HTML encoding failed - ' + (error as Error).message
+	}
+}
+
+const htmlDecodeTransformation = (text: string): string => {
+	try {
+		// Decode HTML entities back to characters
+		return htmlDecode(text)
+	} catch (error) {
+		return 'Error: HTML decoding failed - ' + (error as Error).message
+	}
+}
+
+const unicodeEscapeTransformation = (text: string): string => {
+	try {
+		// Convert each character to \uXXXX format
+		return text.split('').map(char => {
+			const code = char.charCodeAt(0)
+			return '\\u' + code.toString(16).padStart(4, '0')
+		}).join('')
+	} catch (error) {
+		return 'Error: Unicode escape encoding failed - ' + (error as Error).message
+	}
+}
+
+const unicodeUnescapeTransformation = (text: string): string => {
+	try {
+		// Decode \uXXXX sequences back to characters
+		return text.replace(/\\u([0-9A-Fa-f]{4})/g, (_match, hex) => {
+			return String.fromCharCode(parseInt(hex, 16))
+		})
+	} catch (error) {
+		return 'Error: Unicode unescape decoding failed - ' + (error as Error).message
 	}
 }

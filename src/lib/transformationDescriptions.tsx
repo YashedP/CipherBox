@@ -16,6 +16,11 @@ export const transformationDescriptions = {
 	[TransformationType.BASE58]: 'Binary-to-text encoding avoiding ambiguous characters (used in Bitcoin)',
 	[TransformationType.BASE85]: 'Compact binary-to-text encoding (ASCII85)',
 	[TransformationType.HEX_TO_TEXT]: 'Decode hexadecimal string back to text',
+	[TransformationType.ROT13]: 'Simple substitution cipher that shifts letters by 13 positions (self-inverse)',
+	[TransformationType.HTML_ENCODE]: 'Encode special characters to HTML entities (&lt;, &gt;, &amp;, etc.)',
+	[TransformationType.HTML_DECODE]: 'Decode HTML entities back to special characters',
+	[TransformationType.UNICODE_ESCAPE]: 'Convert characters to Unicode escape sequences (\\uXXXX)',
+	[TransformationType.UNICODE_UNESCAPE]: 'Convert Unicode escape sequences back to characters',
 } as const
 
 // Get transformation description using array index
