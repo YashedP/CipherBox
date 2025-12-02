@@ -21,6 +21,7 @@ export const transformationDescriptions = {
 	[TransformationType.HTML_DECODE]: 'Decode HTML entities back to special characters',
 	[TransformationType.UNICODE_ESCAPE]: 'Convert characters to Unicode escape sequences (\\uXXXX)',
 	[TransformationType.UNICODE_UNESCAPE]: 'Convert Unicode escape sequences back to characters',
+	[TransformationType.CHACHA20]: 'Modern stream cipher with 256-bit key; faster than AES on systems without hardware acceleration',
 } as const
 
 // Get transformation description using array index

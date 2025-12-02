@@ -4,6 +4,8 @@ import bs58 from 'bs58'
 import baseX from 'base-x'
 import { encode as base85Encode } from 'base85'
 import { encode as htmlEncode, decode as htmlDecode } from 'html-entities'
+import { chacha20 } from '@noble/ciphers/chacha.js'
+import { hexToBytes, bytesToHex } from '@noble/ciphers/utils.js'
 
 export const TransformationType = {
     NO_TRANSFORMATION: -1,
@@ -26,6 +28,7 @@ export const TransformationType = {
     HTML_DECODE: 16,
     UNICODE_ESCAPE: 17,
     UNICODE_UNESCAPE: 18,
+    CHACHA20: 19,
 } as const;
 
 export type TransformationType = typeof TransformationType[keyof typeof TransformationType];
@@ -76,6 +79,11 @@ type Base58Options = {
 type Base85Options = {
 	variant?: 'ascii85' | 'z85'
 }
+type ChaCha20Options = {
+	key?: string,
+	nonce?: string,
+	outputFormat?: 'hex' | 'base64'
+}
 
 export type TransformOptionsMap = {
 	[TransformationType.NO_TRANSFORMATION]: NoOptions
@@ -98,6 +106,7 @@ export type TransformOptionsMap = {
 	[TransformationType.HTML_DECODE]: NoOptions
 	[TransformationType.UNICODE_ESCAPE]: NoOptions
 	[TransformationType.UNICODE_UNESCAPE]: NoOptions
+	[TransformationType.CHACHA20]: ChaCha20Options
 }
 
 type TransformOptions<T extends TransformationType> = TransformOptionsMap[T]
@@ -122,6 +131,7 @@ const htmlEncodeFunc = (text: string, _opts: NoOptions): string => htmlEncodeTra
 const htmlDecodeFunc = (text: string, _opts: NoOptions): string => htmlDecodeTransformation(text)
 const unicodeEscapeFunc = (text: string, _opts: NoOptions): string => unicodeEscapeTransformation(text)
 const unicodeUnescapeFunc = (text: string, _opts: NoOptions): string => unicodeUnescapeTransformation(text)
+const chacha20Func = (text: string, opts: ChaCha20Options): string => chacha20Transformation(text, opts)
 
 const transformationFunctions = {
 	[TransformationType.NO_TRANSFORMATION]: noTransformation,
@@ -144,6 +154,7 @@ const transformationFunctions = {
 	[TransformationType.HTML_DECODE]: htmlDecodeFunc,
 	[TransformationType.UNICODE_ESCAPE]: unicodeEscapeFunc,
 	[TransformationType.UNICODE_UNESCAPE]: unicodeUnescapeFunc,
+	[TransformationType.CHACHA20]: chacha20Func,
 } as const
 
 export function transformText<T extends TransformationType>(text: string, type: T, options?: TransformOptions<T>): string {
@@ -598,5 +609,35 @@ const unicodeUnescapeTransformation = (text: string): string => {
 		})
 	} catch (error) {
 		return 'Error: Unicode unescape decoding failed - ' + (error as Error).message
+	}
+}
+
+const chacha20Transformation = (text: string, opts: ChaCha20Options): string => {
+	try {
+		const key = opts.key || '0000000000000000000000000000000000000000000000000000000000000000'
+		const nonce = opts.nonce || '000000000000000000000000'
+		const outputFormat = opts.outputFormat || 'hex'
+		
+		// Convert hex strings to Uint8Array
+		const keyBytes = hexToBytes(key)
+		const nonceBytes = hexToBytes(nonce)
+		
+		// Convert text to bytes
+		const textEncoder = new TextEncoder()
+		const textBytes = textEncoder.encode(text)
+		
+		// Encrypt using ChaCha20 (takes key, nonce, and plaintext as arguments)
+		const encrypted = chacha20(keyBytes, nonceBytes, textBytes)
+		
+		// Output in requested format
+		if (outputFormat === 'base64') {
+			// Convert to base64
+			return btoa(String.fromCharCode(...encrypted))
+		} else {
+			// Convert to hex (default)
+			return bytesToHex(encrypted)
+		}
+	} catch (error) {
+		return 'Error: ChaCha20 encryption failed - ' + (error as Error).message
 	}
 }

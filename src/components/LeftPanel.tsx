@@ -47,6 +47,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
   const [htmlDecodeDialogOpen, setHtmlDecodeDialogOpen] = useState(false)
   const [unicodeEscapeDialogOpen, setUnicodeEscapeDialogOpen] = useState(false)
   const [unicodeUnescapeDialogOpen, setUnicodeUnescapeDialogOpen] = useState(false)
+  const [chacha20DialogOpen, setChacha20DialogOpen] = useState(false)
   
   const [caesarForm, setCaesarForm] = useState({
     shift: options[TransformationType.CAESAR].shift
@@ -103,6 +104,12 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
   
   const [base85Form, setBase85Form] = useState({
     variant: options[TransformationType.BASE85].variant
+  })
+  
+  const [chacha20Form, setChacha20Form] = useState({
+    key: options[TransformationType.CHACHA20].key,
+    nonce: options[TransformationType.CHACHA20].nonce,
+    outputFormat: options[TransformationType.CHACHA20].outputFormat
   })
   
   return (
@@ -1295,6 +1302,127 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                             }
                           })
                           setAesDialogOpen(false)
+                          toast.success("Settings saved!")
+                        }}>
+                          Apply Settings
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.CHACHA20 ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.CHACHA20)}
+                  >
+                    ChaCha20
+                  </Button>
+                  <Dialog open={chacha20DialogOpen} onOpenChange={(open) => {
+                    setChacha20DialogOpen(open)
+                    if (open) {
+                      setChacha20Form({
+                        key: options[TransformationType.CHACHA20].key,
+                        nonce: options[TransformationType.CHACHA20].nonce,
+                        outputFormat: options[TransformationType.CHACHA20].outputFormat
+                      })
+                    }
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.CHACHA20 ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[600px]">
+                      <DialogHeader>
+                        <DialogTitle>ChaCha20 Cipher Settings</DialogTitle>
+                        <DialogDescription>
+                          Configure the key, nonce, and output format for ChaCha20 stream cipher. WARNING: Never reuse the same nonce with the same key.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="chacha20-key" className="text-right">
+                              Key (hex)
+                            </label>
+                            <input
+                              id="chacha20-key"
+                              type="text"
+                              placeholder="64 hex characters (32 bytes)"
+                              value={chacha20Form.key}
+                              onChange={(e) => setChacha20Form(prev => ({ ...prev, key: e.target.value }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                            />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="chacha20-nonce" className="text-right">
+                              Nonce (hex)
+                            </label>
+                            <input
+                              id="chacha20-nonce"
+                              type="text"
+                              placeholder="24 hex characters (12 bytes)"
+                              value={chacha20Form.nonce}
+                              onChange={(e) => setChacha20Form(prev => ({ ...prev, nonce: e.target.value }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                            />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="chacha20-format" className="text-right">
+                              Output Format
+                            </label>
+                            <select
+                              id="chacha20-format"
+                              value={chacha20Form.outputFormat}
+                              onChange={(e) => setChacha20Form(prev => ({ ...prev, outputFormat: e.target.value as 'hex' | 'base64' }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="hex">Hexadecimal</option>
+                              <option value="base64">Base64</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setChacha20DialogOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button onClick={() => {
+                          // Validate key
+                          if (!chacha20Form.key || chacha20Form.key.length !== 64) {
+                            toast.error("Key must be exactly 64 hexadecimal characters (32 bytes)")
+                            return
+                          }
+                          
+                          if (!/^[0-9A-Fa-f]{64}$/.test(chacha20Form.key)) {
+                            toast.error("Key must contain only valid hexadecimal characters (0-9, a-f, A-F)")
+                            return
+                          }
+                          
+                          // Validate nonce
+                          if (!chacha20Form.nonce || chacha20Form.nonce.length !== 24) {
+                            toast.error("Nonce must be exactly 24 hexadecimal characters (12 bytes)")
+                            return
+                          }
+                          
+                          if (!/^[0-9A-Fa-f]{24}$/.test(chacha20Form.nonce)) {
+                            toast.error("Nonce must contain only valid hexadecimal characters (0-9, a-f, A-F)")
+                            return
+                          }
+                          
+                          onOptionsChange({
+                            ...options,
+                            [TransformationType.CHACHA20]: {
+                              key: chacha20Form.key,
+                              nonce: chacha20Form.nonce,
+                              outputFormat: chacha20Form.outputFormat
+                            }
+                          })
+                          setChacha20DialogOpen(false)
                           toast.success("Settings saved!")
                         }}>
                           Apply Settings

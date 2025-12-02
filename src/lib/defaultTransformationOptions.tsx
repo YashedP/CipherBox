@@ -55,4 +55,9 @@ export const defaultTransformationOptions: TransformOptionsMap = {
     [TransformationType.HTML_DECODE]: {},
     [TransformationType.UNICODE_ESCAPE]: {},
     [TransformationType.UNICODE_UNESCAPE]: {},
+    [TransformationType.CHACHA20]: {
+        key: '0000000000000000000000000000000000000000000000000000000000000000',
+        nonce: '000000000000000000000000',
+        outputFormat: 'hex'
+    },
 }
