@@ -15,6 +15,7 @@ export const transformationDescriptions = {
 	[TransformationType.BASE32]: 'Binary-to-text encoding using 32-character alphabet (RFC 4648)',
 	[TransformationType.BASE58]: 'Binary-to-text encoding avoiding ambiguous characters (used in Bitcoin)',
 	[TransformationType.BASE85]: 'Compact binary-to-text encoding (ASCII85)',
+	[TransformationType.HEX_TO_TEXT]: 'Decode hexadecimal string back to text',
 } as const
 
 // Get transformation description using array index

@@ -41,6 +41,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
   const [base32DialogOpen, setBase32DialogOpen] = useState(false)
   const [base58DialogOpen, setBase58DialogOpen] = useState(false)
   const [base85DialogOpen, setBase85DialogOpen] = useState(false)
+  const [hexToTextDialogOpen, setHexToTextDialogOpen] = useState(false)
   
   const [caesarForm, setCaesarForm] = useState({
     shift: options[TransformationType.CAESAR].shift
@@ -595,6 +596,38 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                           toast.success("Settings saved!")
                         }}>
                           Apply Settings
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.HEX_TO_TEXT ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.HEX_TO_TEXT)}
+                  >
+                    Hex to Text
+                  </Button>
+                  <Dialog open={hexToTextDialogOpen} onOpenChange={setHexToTextDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.HEX_TO_TEXT ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Hex to Text Settings</DialogTitle>
+                        <DialogDescription>
+                          Hex to Text decoding converts hexadecimal strings back to their original text format. Accepts hex with or without 0x prefix, and with spaces, colons, or hyphens as separators. No additional configuration needed.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button onClick={() => setHexToTextDialogOpen(false)}>
+                          Close
                         </Button>
                       </DialogFooter>
                     </DialogContent>

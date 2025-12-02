@@ -49,4 +49,5 @@ export const defaultTransformationOptions: TransformOptionsMap = {
     [TransformationType.BASE85]: {
         variant: 'ascii85'
     },
+    [TransformationType.HEX_TO_TEXT]: {},
 }

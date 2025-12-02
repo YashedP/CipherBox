@@ -19,6 +19,7 @@ export const TransformationType = {
     BASE32: 10,
     BASE58: 11,
     BASE85: 12,
+    HEX_TO_TEXT: 13,
 } as const;
 
 export type TransformationType = typeof TransformationType[keyof typeof TransformationType];
@@ -85,6 +86,7 @@ export type TransformOptionsMap = {
 	[TransformationType.BASE32]: Base32Options
 	[TransformationType.BASE58]: Base58Options
 	[TransformationType.BASE85]: Base85Options
+	[TransformationType.HEX_TO_TEXT]: NoOptions
 }
 
 type TransformOptions<T extends TransformationType> = TransformOptionsMap[T]
@@ -103,6 +105,7 @@ const urlDecodeFunc = (text: string, _opts: NoOptions): string => urlDecodeTrans
 const base32Func = (text: string, opts: Base32Options): string => base32Transformation(text, opts)
 const base58Func = (text: string, opts: Base58Options): string => base58Transformation(text, opts)
 const base85Func = (text: string, opts: Base85Options): string => base85Transformation(text, opts)
+const hexToTextFunc = (text: string, _opts: NoOptions): string => hexToTextTransformation(text)
 
 const transformationFunctions = {
 	[TransformationType.NO_TRANSFORMATION]: noTransformation,
@@ -119,6 +122,7 @@ const transformationFunctions = {
 	[TransformationType.BASE32]: base32Func,
 	[TransformationType.BASE58]: base58Func,
 	[TransformationType.BASE85]: base85Func,
+	[TransformationType.HEX_TO_TEXT]: hexToTextFunc,
 } as const
 
 export function transformText<T extends TransformationType>(text: string, type: T, options?: TransformOptions<T>): string {
@@ -491,5 +495,34 @@ const base85Transformation = (text: string, opts: Base85Options): string => {
 		}
 	} catch (error) {
 		return 'Error: Base85 encoding failed - ' + (error as Error).message
+	}
+}
+
+const hexToTextTransformation = (text: string): string => {
+	try {
+		// Remove common prefixes and separators
+		let cleanHex = text.replace(/^0x/i, '').replace(/\s+/g, '').replace(/[:-]/g, '')
+		
+		// Validate that we have valid hex characters
+		if (!/^[0-9A-Fa-f]*$/.test(cleanHex)) {
+			return 'Error: Invalid hexadecimal input'
+		}
+		
+		// Ensure even length (each character is represented by 2 hex digits)
+		if (cleanHex.length % 2 !== 0) {
+			return 'Error: Hexadecimal string must have an even number of characters'
+		}
+		
+		// Convert hex pairs to characters
+		let result = ''
+		for (let i = 0; i < cleanHex.length; i += 2) {
+			const hexByte = cleanHex.substring(i, i + 2)
+			const charCode = parseInt(hexByte, 16)
+			result += String.fromCharCode(charCode)
+		}
+		
+		return result
+	} catch (error) {
+		return 'Error: Hex to text conversion failed - ' + (error as Error).message
 	}
 }
