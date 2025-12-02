@@ -434,8 +434,8 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                             return
                           }
                           
-                          if (vigenereForm.keyLength >= vigenereForm.keyword.length) {
-                            toast.error("Key length must be less than keyword length")
+                          if (vigenereForm.keyLength > vigenereForm.keyword.length) {
+                            toast.error("Key length cannot exceed keyword length")
                             return
                           }
                           
