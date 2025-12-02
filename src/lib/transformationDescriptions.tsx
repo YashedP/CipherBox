@@ -30,6 +30,14 @@ export const transformationDescriptions = {
 	[TransformationType.SHA3_256]: '256-bit hash from SHA-3 (Keccak) family',
 	[TransformationType.BLAKE2B]: 'Fast cryptographic hash function, faster than MD5/SHA-1/SHA-2',
 	[TransformationType.HMAC]: 'Hash-based Message Authentication Code with selectable algorithm',
+	[TransformationType.RSA_ENCRYPT]: 'Encrypt data using RSA public key (PKCS#1 v1.5 or OAEP padding)',
+	[TransformationType.RSA_DECRYPT]: 'Decrypt data using RSA private key',
+	[TransformationType.RSA_SIGN]: 'Create digital signature using RSA private key',
+	[TransformationType.RSA_VERIFY]: 'Verify digital signature using RSA public key',
+	[TransformationType.ECDSA_SIGN]: 'Create ECDSA signature using elliptic curve private key',
+	[TransformationType.ECDSA_VERIFY]: 'Verify ECDSA signature using elliptic curve public key',
+	[TransformationType.RSA_KEYGEN]: 'Generate RSA public/private key pair (PEM format)',
+	[TransformationType.ECDSA_KEYGEN]: 'Generate ECDSA public/private key pair (hex format)',
 } as const
 
 // Get transformation description using array index

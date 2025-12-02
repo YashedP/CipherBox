@@ -56,6 +56,14 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
   const [sha3_256DialogOpen, setSha3_256DialogOpen] = useState(false)
   const [blake2bDialogOpen, setBlake2bDialogOpen] = useState(false)
   const [hmacDialogOpen, setHmacDialogOpen] = useState(false)
+  const [rsaEncryptDialogOpen, setRsaEncryptDialogOpen] = useState(false)
+  const [rsaDecryptDialogOpen, setRsaDecryptDialogOpen] = useState(false)
+  const [rsaSignDialogOpen, setRsaSignDialogOpen] = useState(false)
+  const [rsaVerifyDialogOpen, setRsaVerifyDialogOpen] = useState(false)
+  const [ecdsaSignDialogOpen, setEcdsaSignDialogOpen] = useState(false)
+  const [ecdsaVerifyDialogOpen, setEcdsaVerifyDialogOpen] = useState(false)
+  const [rsaKeygenDialogOpen, setRsaKeygenDialogOpen] = useState(false)
+  const [ecdsaKeygenDialogOpen, setEcdsaKeygenDialogOpen] = useState(false)
   
   const [caesarForm, setCaesarForm] = useState({
     shift: options[TransformationType.CAESAR].shift
@@ -123,6 +131,46 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
   const [hmacForm, setHmacForm] = useState({
     key: options[TransformationType.HMAC].key,
     algorithm: options[TransformationType.HMAC].algorithm
+  })
+  
+  const [rsaEncryptForm, setRsaEncryptForm] = useState({
+    publicKey: options[TransformationType.RSA_ENCRYPT].publicKey,
+    padding: options[TransformationType.RSA_ENCRYPT].padding
+  })
+  
+  const [rsaDecryptForm, setRsaDecryptForm] = useState({
+    privateKey: options[TransformationType.RSA_DECRYPT].privateKey,
+    padding: options[TransformationType.RSA_DECRYPT].padding
+  })
+  
+  const [rsaSignForm, setRsaSignForm] = useState({
+    privateKey: options[TransformationType.RSA_SIGN].privateKey,
+    algorithm: options[TransformationType.RSA_SIGN].algorithm
+  })
+  
+  const [rsaVerifyForm, setRsaVerifyForm] = useState({
+    publicKey: options[TransformationType.RSA_VERIFY].publicKey,
+    signature: options[TransformationType.RSA_VERIFY].signature,
+    algorithm: options[TransformationType.RSA_VERIFY].algorithm
+  })
+  
+  const [ecdsaSignForm, setEcdsaSignForm] = useState({
+    privateKey: options[TransformationType.ECDSA_SIGN].privateKey,
+    curve: options[TransformationType.ECDSA_SIGN].curve
+  })
+  
+  const [ecdsaVerifyForm, setEcdsaVerifyForm] = useState({
+    publicKey: options[TransformationType.ECDSA_VERIFY].publicKey,
+    signature: options[TransformationType.ECDSA_VERIFY].signature,
+    curve: options[TransformationType.ECDSA_VERIFY].curve
+  })
+  
+  const [rsaKeygenForm, setRsaKeygenForm] = useState({
+    keySize: options[TransformationType.RSA_KEYGEN].keySize
+  })
+  
+  const [ecdsaKeygenForm, setEcdsaKeygenForm] = useState({
+    curve: options[TransformationType.ECDSA_KEYGEN].curve
   })
   
   return (
@@ -1944,6 +1992,761 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                             }
                           })
                           setHmacDialogOpen(false)
+                          toast.success("Settings saved!")
+                        }}>
+                          Apply Settings
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.RSA_ENCRYPT ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.RSA_ENCRYPT)}
+                  >
+                    RSA Encrypt
+                  </Button>
+                  <Dialog open={rsaEncryptDialogOpen} onOpenChange={(open) => {
+                    setRsaEncryptDialogOpen(open)
+                    if (open) {
+                      setRsaEncryptForm({
+                        publicKey: options[TransformationType.RSA_ENCRYPT].publicKey,
+                        padding: options[TransformationType.RSA_ENCRYPT].padding
+                      })
+                    }
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.RSA_ENCRYPT ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[600px]">
+                      <DialogHeader>
+                        <DialogTitle>RSA Encrypt Settings</DialogTitle>
+                        <DialogDescription>
+                          Encrypt data using RSA public key. Requires a PEM-formatted public key.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="rsa-encrypt-key" className="text-right">
+                              Public Key (PEM)
+                            </label>
+                            <textarea
+                              id="rsa-encrypt-key"
+                              placeholder="-----BEGIN PUBLIC KEY-----&#10;...&#10;-----END PUBLIC KEY-----"
+                              value={rsaEncryptForm.publicKey}
+                              onChange={(e) => setRsaEncryptForm(prev => ({ ...prev, publicKey: e.target.value }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-xs min-h-[120px]"
+                            />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="rsa-encrypt-padding" className="text-right">
+                              Padding
+                            </label>
+                            <select
+                              id="rsa-encrypt-padding"
+                              value={rsaEncryptForm.padding}
+                              onChange={(e) => setRsaEncryptForm(prev => ({ ...prev, padding: e.target.value as 'PKCS1' | 'OAEP' }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="PKCS1">PKCS#1 v1.5</option>
+                              <option value="OAEP">OAEP</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setRsaEncryptDialogOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button onClick={() => {
+                          if (!rsaEncryptForm.publicKey || rsaEncryptForm.publicKey.trim() === '') {
+                            toast.error("Public key is required")
+                            return
+                          }
+                          
+                          if (!rsaEncryptForm.publicKey.includes('BEGIN PUBLIC KEY')) {
+                            toast.error("Public key must be in PEM format")
+                            return
+                          }
+                          
+                          onOptionsChange({
+                            ...options,
+                            [TransformationType.RSA_ENCRYPT]: {
+                              publicKey: rsaEncryptForm.publicKey,
+                              padding: rsaEncryptForm.padding
+                            }
+                          })
+                          setRsaEncryptDialogOpen(false)
+                          toast.success("Settings saved!")
+                        }}>
+                          Apply Settings
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.RSA_DECRYPT ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.RSA_DECRYPT)}
+                  >
+                    RSA Decrypt
+                  </Button>
+                  <Dialog open={rsaDecryptDialogOpen} onOpenChange={(open) => {
+                    setRsaDecryptDialogOpen(open)
+                    if (open) {
+                      setRsaDecryptForm({
+                        privateKey: options[TransformationType.RSA_DECRYPT].privateKey,
+                        padding: options[TransformationType.RSA_DECRYPT].padding
+                      })
+                    }
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.RSA_DECRYPT ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[600px]">
+                      <DialogHeader>
+                        <DialogTitle>RSA Decrypt Settings</DialogTitle>
+                        <DialogDescription>
+                          Decrypt data using RSA private key. Requires a PEM-formatted private key.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="rsa-decrypt-key" className="text-right">
+                              Private Key (PEM)
+                            </label>
+                            <textarea
+                              id="rsa-decrypt-key"
+                              placeholder="-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----"
+                              value={rsaDecryptForm.privateKey}
+                              onChange={(e) => setRsaDecryptForm(prev => ({ ...prev, privateKey: e.target.value }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-xs min-h-[120px]"
+                            />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="rsa-decrypt-padding" className="text-right">
+                              Padding
+                            </label>
+                            <select
+                              id="rsa-decrypt-padding"
+                              value={rsaDecryptForm.padding}
+                              onChange={(e) => setRsaDecryptForm(prev => ({ ...prev, padding: e.target.value as 'PKCS1' | 'OAEP' }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="PKCS1">PKCS#1 v1.5</option>
+                              <option value="OAEP">OAEP</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setRsaDecryptDialogOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button onClick={() => {
+                          if (!rsaDecryptForm.privateKey || rsaDecryptForm.privateKey.trim() === '') {
+                            toast.error("Private key is required")
+                            return
+                          }
+                          
+                          if (!rsaDecryptForm.privateKey.includes('BEGIN') || !rsaDecryptForm.privateKey.includes('PRIVATE KEY')) {
+                            toast.error("Private key must be in PEM format")
+                            return
+                          }
+                          
+                          onOptionsChange({
+                            ...options,
+                            [TransformationType.RSA_DECRYPT]: {
+                              privateKey: rsaDecryptForm.privateKey,
+                              padding: rsaDecryptForm.padding
+                            }
+                          })
+                          setRsaDecryptDialogOpen(false)
+                          toast.success("Settings saved!")
+                        }}>
+                          Apply Settings
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.RSA_SIGN ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.RSA_SIGN)}
+                  >
+                    RSA Sign
+                  </Button>
+                  <Dialog open={rsaSignDialogOpen} onOpenChange={(open) => {
+                    setRsaSignDialogOpen(open)
+                    if (open) {
+                      setRsaSignForm({
+                        privateKey: options[TransformationType.RSA_SIGN].privateKey,
+                        algorithm: options[TransformationType.RSA_SIGN].algorithm
+                      })
+                    }
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.RSA_SIGN ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[600px]">
+                      <DialogHeader>
+                        <DialogTitle>RSA Sign Settings</DialogTitle>
+                        <DialogDescription>
+                          Create a digital signature using RSA private key. The signature can be verified with the corresponding public key.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="rsa-sign-key" className="text-right">
+                              Private Key (PEM)
+                            </label>
+                            <textarea
+                              id="rsa-sign-key"
+                              placeholder="-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----"
+                              value={rsaSignForm.privateKey}
+                              onChange={(e) => setRsaSignForm(prev => ({ ...prev, privateKey: e.target.value }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-xs min-h-[120px]"
+                            />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="rsa-sign-algorithm" className="text-right">
+                              Algorithm
+                            </label>
+                            <select
+                              id="rsa-sign-algorithm"
+                              value={rsaSignForm.algorithm}
+                              onChange={(e) => setRsaSignForm(prev => ({ ...prev, algorithm: e.target.value as 'SHA256withRSA' | 'SHA512withRSA' }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="SHA256withRSA">SHA256 with RSA</option>
+                              <option value="SHA512withRSA">SHA512 with RSA</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setRsaSignDialogOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button onClick={() => {
+                          if (!rsaSignForm.privateKey || rsaSignForm.privateKey.trim() === '') {
+                            toast.error("Private key is required")
+                            return
+                          }
+                          
+                          if (!rsaSignForm.privateKey.includes('BEGIN') || !rsaSignForm.privateKey.includes('PRIVATE KEY')) {
+                            toast.error("Private key must be in PEM format")
+                            return
+                          }
+                          
+                          onOptionsChange({
+                            ...options,
+                            [TransformationType.RSA_SIGN]: {
+                              privateKey: rsaSignForm.privateKey,
+                              algorithm: rsaSignForm.algorithm
+                            }
+                          })
+                          setRsaSignDialogOpen(false)
+                          toast.success("Settings saved!")
+                        }}>
+                          Apply Settings
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.RSA_VERIFY ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.RSA_VERIFY)}
+                  >
+                    RSA Verify
+                  </Button>
+                  <Dialog open={rsaVerifyDialogOpen} onOpenChange={(open) => {
+                    setRsaVerifyDialogOpen(open)
+                    if (open) {
+                      setRsaVerifyForm({
+                        publicKey: options[TransformationType.RSA_VERIFY].publicKey,
+                        signature: options[TransformationType.RSA_VERIFY].signature,
+                        algorithm: options[TransformationType.RSA_VERIFY].algorithm
+                      })
+                    }
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.RSA_VERIFY ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[600px]">
+                      <DialogHeader>
+                        <DialogTitle>RSA Verify Settings</DialogTitle>
+                        <DialogDescription>
+                          Verify an RSA signature using a public key. Requires the public key, signature, and original message.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="rsa-verify-key" className="text-right">
+                              Public Key (PEM)
+                            </label>
+                            <textarea
+                              id="rsa-verify-key"
+                              placeholder="-----BEGIN PUBLIC KEY-----&#10;...&#10;-----END PUBLIC KEY-----"
+                              value={rsaVerifyForm.publicKey}
+                              onChange={(e) => setRsaVerifyForm(prev => ({ ...prev, publicKey: e.target.value }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-xs min-h-[120px]"
+                            />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="rsa-verify-signature" className="text-right">
+                              Signature (hex)
+                            </label>
+                            <textarea
+                              id="rsa-verify-signature"
+                              placeholder="Enter signature in hexadecimal format"
+                              value={rsaVerifyForm.signature}
+                              onChange={(e) => setRsaVerifyForm(prev => ({ ...prev, signature: e.target.value }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-xs min-h-[80px]"
+                            />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="rsa-verify-algorithm" className="text-right">
+                              Algorithm
+                            </label>
+                            <select
+                              id="rsa-verify-algorithm"
+                              value={rsaVerifyForm.algorithm}
+                              onChange={(e) => setRsaVerifyForm(prev => ({ ...prev, algorithm: e.target.value as 'SHA256withRSA' | 'SHA512withRSA' }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="SHA256withRSA">SHA256 with RSA</option>
+                              <option value="SHA512withRSA">SHA512 with RSA</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setRsaVerifyDialogOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button onClick={() => {
+                          if (!rsaVerifyForm.publicKey || rsaVerifyForm.publicKey.trim() === '') {
+                            toast.error("Public key is required")
+                            return
+                          }
+                          
+                          if (!rsaVerifyForm.publicKey.includes('BEGIN PUBLIC KEY')) {
+                            toast.error("Public key must be in PEM format")
+                            return
+                          }
+                          
+                          if (!rsaVerifyForm.signature || rsaVerifyForm.signature.trim() === '') {
+                            toast.error("Signature is required")
+                            return
+                          }
+                          
+                          onOptionsChange({
+                            ...options,
+                            [TransformationType.RSA_VERIFY]: {
+                              publicKey: rsaVerifyForm.publicKey,
+                              signature: rsaVerifyForm.signature,
+                              algorithm: rsaVerifyForm.algorithm
+                            }
+                          })
+                          setRsaVerifyDialogOpen(false)
+                          toast.success("Settings saved!")
+                        }}>
+                          Apply Settings
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.ECDSA_SIGN ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.ECDSA_SIGN)}
+                  >
+                    ECDSA Sign
+                  </Button>
+                  <Dialog open={ecdsaSignDialogOpen} onOpenChange={(open) => {
+                    setEcdsaSignDialogOpen(open)
+                    if (open) {
+                      setEcdsaSignForm({
+                        privateKey: options[TransformationType.ECDSA_SIGN].privateKey,
+                        curve: options[TransformationType.ECDSA_SIGN].curve
+                      })
+                    }
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.ECDSA_SIGN ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[600px]">
+                      <DialogHeader>
+                        <DialogTitle>ECDSA Sign Settings</DialogTitle>
+                        <DialogDescription>
+                          Create an ECDSA digital signature using elliptic curve private key. Private key must be in hexadecimal format.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="ecdsa-sign-key" className="text-right">
+                              Private Key (hex)
+                            </label>
+                            <input
+                              id="ecdsa-sign-key"
+                              type="text"
+                              placeholder="64 hex characters for secp256k1"
+                              value={ecdsaSignForm.privateKey}
+                              onChange={(e) => setEcdsaSignForm(prev => ({ ...prev, privateKey: e.target.value }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                            />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="ecdsa-sign-curve" className="text-right">
+                              Curve
+                            </label>
+                            <select
+                              id="ecdsa-sign-curve"
+                              value={ecdsaSignForm.curve}
+                              onChange={(e) => setEcdsaSignForm(prev => ({ ...prev, curve: e.target.value as 'secp256k1' | 'P-256' | 'P-384' }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="secp256k1">secp256k1 (Bitcoin)</option>
+                              <option value="P-256">P-256 (NIST)</option>
+                              <option value="P-384">P-384 (NIST)</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setEcdsaSignDialogOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button onClick={() => {
+                          if (!ecdsaSignForm.privateKey || ecdsaSignForm.privateKey.trim() === '') {
+                            toast.error("Private key is required")
+                            return
+                          }
+                          
+                          if (!/^[0-9A-Fa-f]+$/.test(ecdsaSignForm.privateKey)) {
+                            toast.error("Private key must be in hexadecimal format")
+                            return
+                          }
+                          
+                          onOptionsChange({
+                            ...options,
+                            [TransformationType.ECDSA_SIGN]: {
+                              privateKey: ecdsaSignForm.privateKey,
+                              curve: ecdsaSignForm.curve
+                            }
+                          })
+                          setEcdsaSignDialogOpen(false)
+                          toast.success("Settings saved!")
+                        }}>
+                          Apply Settings
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.ECDSA_VERIFY ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.ECDSA_VERIFY)}
+                  >
+                    ECDSA Verify
+                  </Button>
+                  <Dialog open={ecdsaVerifyDialogOpen} onOpenChange={(open) => {
+                    setEcdsaVerifyDialogOpen(open)
+                    if (open) {
+                      setEcdsaVerifyForm({
+                        publicKey: options[TransformationType.ECDSA_VERIFY].publicKey,
+                        signature: options[TransformationType.ECDSA_VERIFY].signature,
+                        curve: options[TransformationType.ECDSA_VERIFY].curve
+                      })
+                    }
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.ECDSA_VERIFY ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[600px]">
+                      <DialogHeader>
+                        <DialogTitle>ECDSA Verify Settings</DialogTitle>
+                        <DialogDescription>
+                          Verify an ECDSA signature using elliptic curve public key. Requires public key, signature, and original message.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="ecdsa-verify-key" className="text-right">
+                              Public Key (hex)
+                            </label>
+                            <input
+                              id="ecdsa-verify-key"
+                              type="text"
+                              placeholder="Compressed or uncompressed public key in hex"
+                              value={ecdsaVerifyForm.publicKey}
+                              onChange={(e) => setEcdsaVerifyForm(prev => ({ ...prev, publicKey: e.target.value }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                            />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="ecdsa-verify-signature" className="text-right">
+                              Signature (hex)
+                            </label>
+                            <textarea
+                              id="ecdsa-verify-signature"
+                              placeholder="Enter signature in hexadecimal format"
+                              value={ecdsaVerifyForm.signature}
+                              onChange={(e) => setEcdsaVerifyForm(prev => ({ ...prev, signature: e.target.value }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-xs min-h-[80px]"
+                            />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="ecdsa-verify-curve" className="text-right">
+                              Curve
+                            </label>
+                            <select
+                              id="ecdsa-verify-curve"
+                              value={ecdsaVerifyForm.curve}
+                              onChange={(e) => setEcdsaVerifyForm(prev => ({ ...prev, curve: e.target.value as 'secp256k1' | 'P-256' | 'P-384' }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="secp256k1">secp256k1 (Bitcoin)</option>
+                              <option value="P-256">P-256 (NIST)</option>
+                              <option value="P-384">P-384 (NIST)</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setEcdsaVerifyDialogOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button onClick={() => {
+                          if (!ecdsaVerifyForm.publicKey || ecdsaVerifyForm.publicKey.trim() === '') {
+                            toast.error("Public key is required")
+                            return
+                          }
+                          
+                          if (!/^[0-9A-Fa-f]+$/.test(ecdsaVerifyForm.publicKey)) {
+                            toast.error("Public key must be in hexadecimal format")
+                            return
+                          }
+                          
+                          if (!ecdsaVerifyForm.signature || ecdsaVerifyForm.signature.trim() === '') {
+                            toast.error("Signature is required")
+                            return
+                          }
+                          
+                          if (!/^[0-9A-Fa-f]+$/.test(ecdsaVerifyForm.signature)) {
+                            toast.error("Signature must be in hexadecimal format")
+                            return
+                          }
+                          
+                          onOptionsChange({
+                            ...options,
+                            [TransformationType.ECDSA_VERIFY]: {
+                              publicKey: ecdsaVerifyForm.publicKey,
+                              signature: ecdsaVerifyForm.signature,
+                              curve: ecdsaVerifyForm.curve
+                            }
+                          })
+                          setEcdsaVerifyDialogOpen(false)
+                          toast.success("Settings saved!")
+                        }}>
+                          Apply Settings
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.RSA_KEYGEN ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.RSA_KEYGEN)}
+                  >
+                    RSA Keygen
+                  </Button>
+                  <Dialog open={rsaKeygenDialogOpen} onOpenChange={(open) => {
+                    setRsaKeygenDialogOpen(open)
+                    if (open) {
+                      setRsaKeygenForm({
+                        keySize: options[TransformationType.RSA_KEYGEN].keySize
+                      })
+                    }
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.RSA_KEYGEN ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[600px]">
+                      <DialogHeader>
+                        <DialogTitle>RSA Key Generator Settings</DialogTitle>
+                        <DialogDescription>
+                          Generate RSA public/private key pairs for encryption, decryption, signing, and verification. Output will be in PEM format.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="rsa-keygen-size" className="text-right">
+                              Key Size
+                            </label>
+                            <select
+                              id="rsa-keygen-size"
+                              value={rsaKeygenForm.keySize}
+                              onChange={(e) => setRsaKeygenForm(prev => ({ ...prev, keySize: parseInt(e.target.value) as 1024 | 2048 | 4096 }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="1024">1024 bits (Fast, less secure)</option>
+                              <option value="2048">2048 bits (Recommended)</option>
+                              <option value="4096">4096 bits (Slow, most secure)</option>
+                            </select>
+                          </div>
+                          <div className="col-span-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                            <p className="text-sm text-yellow-800">
+                              ⚠️ <strong>WARNING:</strong> Generated keys are for DEMO purposes only. Do NOT use these keys for production security. Keep private keys secure and never share them.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setRsaKeygenDialogOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button onClick={() => {
+                          onOptionsChange({
+                            ...options,
+                            [TransformationType.RSA_KEYGEN]: {
+                              keySize: rsaKeygenForm.keySize
+                            }
+                          })
+                          setRsaKeygenDialogOpen(false)
+                          toast.success("Settings saved!")
+                        }}>
+                          Apply Settings
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.ECDSA_KEYGEN ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.ECDSA_KEYGEN)}
+                  >
+                    ECDSA Keygen
+                  </Button>
+                  <Dialog open={ecdsaKeygenDialogOpen} onOpenChange={(open) => {
+                    setEcdsaKeygenDialogOpen(open)
+                    if (open) {
+                      setEcdsaKeygenForm({
+                        curve: options[TransformationType.ECDSA_KEYGEN].curve
+                      })
+                    }
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.ECDSA_KEYGEN ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[600px]">
+                      <DialogHeader>
+                        <DialogTitle>ECDSA Key Generator Settings</DialogTitle>
+                        <DialogDescription>
+                          Generate ECDSA public/private key pairs for signing and verification. Output will be in hexadecimal format.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <label htmlFor="ecdsa-keygen-curve" className="text-right">
+                              Curve
+                            </label>
+                            <select
+                              id="ecdsa-keygen-curve"
+                              value={ecdsaKeygenForm.curve}
+                              onChange={(e) => setEcdsaKeygenForm(prev => ({ ...prev, curve: e.target.value as 'secp256k1' | 'P-256' | 'P-384' }))}
+                              className="col-span-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option value="secp256k1">secp256k1 (Bitcoin)</option>
+                              <option value="P-256">P-256 (NIST)</option>
+                              <option value="P-384">P-384 (NIST)</option>
+                            </select>
+                          </div>
+                          <div className="col-span-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                            <p className="text-sm text-yellow-800">
+                              ⚠️ <strong>WARNING:</strong> Generated keys are for DEMO purposes only. Do NOT use these keys for production security. Keep private keys secure and never share them.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setEcdsaKeygenDialogOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button onClick={() => {
+                          onOptionsChange({
+                            ...options,
+                            [TransformationType.ECDSA_KEYGEN]: {
+                              curve: ecdsaKeygenForm.curve
+                            }
+                          })
+                          setEcdsaKeygenDialogOpen(false)
                           toast.success("Settings saved!")
                         }}>
                           Apply Settings

@@ -71,4 +71,36 @@ export const defaultTransformationOptions: TransformOptionsMap = {
         key: 'secret-key',
         algorithm: 'SHA256'
     },
+    [TransformationType.RSA_ENCRYPT]: {
+        publicKey: '',
+        padding: 'PKCS1'
+    },
+    [TransformationType.RSA_DECRYPT]: {
+        privateKey: '',
+        padding: 'PKCS1'
+    },
+    [TransformationType.RSA_SIGN]: {
+        privateKey: '',
+        algorithm: 'SHA256withRSA'
+    },
+    [TransformationType.RSA_VERIFY]: {
+        publicKey: '',
+        signature: '',
+        algorithm: 'SHA256withRSA'
+    },
+    [TransformationType.ECDSA_SIGN]: {
+        privateKey: '',
+        curve: 'secp256k1'
+    },
+    [TransformationType.ECDSA_VERIFY]: {
+        publicKey: '',
+        signature: '',
+        curve: 'secp256k1'
+    },
+    [TransformationType.RSA_KEYGEN]: {
+        keySize: 2048
+    },
+    [TransformationType.ECDSA_KEYGEN]: {
+        curve: 'secp256k1'
+    },
 }

@@ -7,6 +7,10 @@ import { encode as htmlEncode, decode as htmlDecode } from 'html-entities'
 import { chacha20 } from '@noble/ciphers/chacha.js'
 import { hexToBytes, bytesToHex } from '@noble/ciphers/utils.js'
 import { blake2b } from '@noble/hashes/blake2.js'
+import { sha256 } from '@noble/hashes/sha2.js'
+import * as rs from 'jsrsasign'
+import { secp256k1 } from '@noble/curves/secp256k1.js'
+import { p256, p384 } from '@noble/curves/nist.js'
 
 export const TransformationType = {
     NO_TRANSFORMATION: -1,
@@ -38,6 +42,14 @@ export const TransformationType = {
     SHA3_256: 25,
     BLAKE2B: 26,
     HMAC: 27,
+    RSA_ENCRYPT: 28,
+    RSA_DECRYPT: 29,
+    RSA_SIGN: 30,
+    RSA_VERIFY: 31,
+    ECDSA_SIGN: 32,
+    ECDSA_VERIFY: 33,
+    RSA_KEYGEN: 34,
+    ECDSA_KEYGEN: 35,
 } as const;
 
 export type TransformationType = typeof TransformationType[keyof typeof TransformationType];
@@ -97,6 +109,38 @@ type HMACOptions = {
 	key?: string,
 	algorithm?: 'MD5' | 'SHA1' | 'SHA256' | 'SHA384' | 'SHA512'
 }
+type RSAEncryptOptions = {
+	publicKey?: string,
+	padding?: 'PKCS1' | 'OAEP'
+}
+type RSADecryptOptions = {
+	privateKey?: string,
+	padding?: 'PKCS1' | 'OAEP'
+}
+type RSASignOptions = {
+	privateKey?: string,
+	algorithm?: 'SHA256withRSA' | 'SHA512withRSA'
+}
+type RSAVerifyOptions = {
+	publicKey?: string,
+	signature?: string,
+	algorithm?: 'SHA256withRSA' | 'SHA512withRSA'
+}
+type ECDSASignOptions = {
+	privateKey?: string,
+	curve?: 'secp256k1' | 'P-256' | 'P-384'
+}
+type ECDSAVerifyOptions = {
+	publicKey?: string,
+	signature?: string,
+	curve?: 'secp256k1' | 'P-256' | 'P-384'
+}
+type RSAKeygenOptions = {
+	keySize?: 1024 | 2048 | 4096
+}
+type ECDSAKeygenOptions = {
+	curve?: 'secp256k1' | 'P-256' | 'P-384'
+}
 
 export type TransformOptionsMap = {
 	[TransformationType.NO_TRANSFORMATION]: NoOptions
@@ -128,6 +172,14 @@ export type TransformOptionsMap = {
 	[TransformationType.SHA3_256]: NoOptions
 	[TransformationType.BLAKE2B]: NoOptions
 	[TransformationType.HMAC]: HMACOptions
+	[TransformationType.RSA_ENCRYPT]: RSAEncryptOptions
+	[TransformationType.RSA_DECRYPT]: RSADecryptOptions
+	[TransformationType.RSA_SIGN]: RSASignOptions
+	[TransformationType.RSA_VERIFY]: RSAVerifyOptions
+	[TransformationType.ECDSA_SIGN]: ECDSASignOptions
+	[TransformationType.ECDSA_VERIFY]: ECDSAVerifyOptions
+	[TransformationType.RSA_KEYGEN]: RSAKeygenOptions
+	[TransformationType.ECDSA_KEYGEN]: ECDSAKeygenOptions
 }
 
 type TransformOptions<T extends TransformationType> = TransformOptionsMap[T]
@@ -161,6 +213,14 @@ const sha512Func = (text: string, _opts: NoOptions): string => sha512Transformat
 const sha3_256Func = (text: string, _opts: NoOptions): string => sha3_256Transformation(text)
 const blake2bFunc = (text: string, _opts: NoOptions): string => blake2bTransformation(text)
 const hmacFunc = (text: string, opts: HMACOptions): string => hmacTransformation(text, opts)
+const rsaEncryptFunc = (text: string, opts: RSAEncryptOptions): string => rsaEncryptTransformation(text, opts)
+const rsaDecryptFunc = (text: string, opts: RSADecryptOptions): string => rsaDecryptTransformation(text, opts)
+const rsaSignFunc = (text: string, opts: RSASignOptions): string => rsaSignTransformation(text, opts)
+const rsaVerifyFunc = (text: string, opts: RSAVerifyOptions): string => rsaVerifyTransformation(text, opts)
+const ecdsaSignFunc = (text: string, opts: ECDSASignOptions): string => ecdsaSignTransformation(text, opts)
+const ecdsaVerifyFunc = (text: string, opts: ECDSAVerifyOptions): string => ecdsaVerifyTransformation(text, opts)
+const rsaKeygenFunc = (text: string, opts: RSAKeygenOptions): string => rsaKeygenTransformation(text, opts)
+const ecdsaKeygenFunc = (text: string, opts: ECDSAKeygenOptions): string => ecdsaKeygenTransformation(text, opts)
 
 const transformationFunctions = {
 	[TransformationType.NO_TRANSFORMATION]: noTransformation,
@@ -192,6 +252,14 @@ const transformationFunctions = {
 	[TransformationType.SHA3_256]: sha3_256Func,
 	[TransformationType.BLAKE2B]: blake2bFunc,
 	[TransformationType.HMAC]: hmacFunc,
+	[TransformationType.RSA_ENCRYPT]: rsaEncryptFunc,
+	[TransformationType.RSA_DECRYPT]: rsaDecryptFunc,
+	[TransformationType.RSA_SIGN]: rsaSignFunc,
+	[TransformationType.RSA_VERIFY]: rsaVerifyFunc,
+	[TransformationType.ECDSA_SIGN]: ecdsaSignFunc,
+	[TransformationType.ECDSA_VERIFY]: ecdsaVerifyFunc,
+	[TransformationType.RSA_KEYGEN]: rsaKeygenFunc,
+	[TransformationType.ECDSA_KEYGEN]: ecdsaKeygenFunc,
 } as const
 
 export function transformText<T extends TransformationType>(text: string, type: T, options?: TransformOptions<T>): string {
@@ -766,5 +834,253 @@ const hmacTransformation = (text: string, opts: HMACOptions): string => {
 		}
 	} catch (error) {
 		return 'Error: HMAC generation failed - ' + (error as Error).message
+	}
+}
+
+const rsaEncryptTransformation = (text: string, opts: RSAEncryptOptions): string => {
+	try {
+		let publicKey = opts.publicKey || ''
+		const padding = opts.padding || 'PKCS1'
+		
+		if (!publicKey.trim()) {
+			return 'Error: Public key is required'
+		}
+		
+		// Extract PEM key if it's embedded in text (e.g., from keygen output)
+		// Look for the actual PEM block
+		const pemMatch = publicKey.match(/-----BEGIN[\s\S]*?-----END[\s\S]*?-----/)
+		if (pemMatch) {
+			publicKey = pemMatch[0]
+		}
+		
+		// Parse the key from PEM - should be RSA key
+		const keyObj = rs.KEYUTIL.getKey(publicKey) as rs.RSAKey & { n?: rs.BigInteger }
+		
+		const modulus = keyObj.n
+		const keySizeBits = modulus?.bitLength?.()
+		if (!keySizeBits) {
+			return 'Error: Unable to determine RSA key size'
+		}
+		
+		const keySizeBytes = keySizeBits / 8
+		const maxBytes =
+			padding === 'OAEP'
+				? keySizeBytes - 2 * 20 - 2 // OAEP defaults to SHA-1 in jsrsasign (20-byte hash)
+				: keySizeBytes - 11 // PKCS#1 v1.5
+		
+		if (maxBytes <= 0) {
+			return 'Error: Invalid RSA key size or padding combination'
+		}
+		
+		const textBytes = new TextEncoder().encode(text)
+		if (textBytes.length > maxBytes) {
+			return `Error: Message too long. ${keySizeBits}-bit RSA with ${padding} padding can encrypt up to ${Math.floor(
+				maxBytes
+			)} bytes (got ${textBytes.length}).`
+		}
+		
+		const encrypted = rs.KJUR.crypto.Cipher.encrypt(text, keyObj, padding === 'OAEP' ? 'RSAOAEP' : 'RSA')
+		return encrypted
+	} catch (error) {
+		return 'Error: RSA encryption failed - ' + (error as Error).message
+	}
+}
+
+const rsaDecryptTransformation = (text: string, opts: RSADecryptOptions): string => {
+	try {
+		let privateKey = opts.privateKey || ''
+		const padding = opts.padding || 'PKCS1'
+		
+		if (!privateKey.trim()) {
+			return 'Error: Private key is required'
+		}
+		
+		// Extract PEM key if it's embedded in text (e.g., from keygen output)
+		// Look for the actual PEM block
+		const pemMatch = privateKey.match(/-----BEGIN[\s\S]*?-----END[\s\S]*?-----/)
+		if (pemMatch) {
+			privateKey = pemMatch[0]
+		}
+		
+		// Parse the key from PEM - should be RSA key
+		const keyObj = rs.KEYUTIL.getKey(privateKey) as rs.RSAKey
+		
+		// Direct RSA decryption
+		const decrypted = rs.KJUR.crypto.Cipher.decrypt(text, keyObj, padding === 'OAEP' ? 'RSAOAEP' : 'RSA')
+		return decrypted
+	} catch (error) {
+		return 'Error: RSA decryption failed - ' + (error as Error).message
+	}
+}
+
+const rsaSignTransformation = (text: string, opts: RSASignOptions): string => {
+	try {
+		const privateKey = opts.privateKey || ''
+		const algorithm = opts.algorithm || 'SHA256withRSA'
+		
+		if (!privateKey.trim()) {
+			return 'Error: Private key is required'
+		}
+		
+		// Create signature object
+		const sig = new rs.KJUR.crypto.Signature({ alg: algorithm })
+		sig.init(privateKey)
+		sig.updateString(text)
+		const signature = sig.sign()
+		
+		return signature
+	} catch (error) {
+		return 'Error: RSA signing failed - ' + (error as Error).message
+	}
+}
+
+const rsaVerifyTransformation = (text: string, opts: RSAVerifyOptions): string => {
+	try {
+		const publicKey = opts.publicKey || ''
+		const signature = opts.signature || ''
+		const algorithm = opts.algorithm || 'SHA256withRSA'
+		
+		if (!publicKey.trim()) {
+			return 'Error: Public key is required'
+		}
+		
+		if (!signature.trim()) {
+			return 'Error: Signature is required for verification'
+		}
+		
+		// Create signature object
+		const sig = new rs.KJUR.crypto.Signature({ alg: algorithm })
+		sig.init(publicKey)
+		sig.updateString(text)
+		const isValid = sig.verify(signature)
+		
+		return isValid ? 'Signature is VALID ✓' : 'Signature is INVALID ✗'
+	} catch (error) {
+		return 'Error: RSA verification failed - ' + (error as Error).message
+	}
+}
+
+const ecdsaSignTransformation = (text: string, opts: ECDSASignOptions): string => {
+	try {
+		const privateKey = opts.privateKey || ''
+		const curve = opts.curve || 'secp256k1'
+		
+		if (!privateKey.trim()) {
+			return 'Error: Private key is required'
+		}
+		
+		// Convert private key from hex to bytes
+		const privKeyBytes = hexToBytes(privateKey)
+		
+		// Hash the message first
+		const textEncoder = new TextEncoder()
+		const msgBytes = textEncoder.encode(text)
+		const msgHash = sha256(msgBytes)
+		
+		// Sign based on curve (sign returns Uint8Array directly)
+		let signatureBytes: Uint8Array
+		if (curve === 'secp256k1') {
+			signatureBytes = secp256k1.sign(msgHash, privKeyBytes)
+		} else if (curve === 'P-256') {
+			signatureBytes = p256.sign(msgHash, privKeyBytes)
+		} else if (curve === 'P-384') {
+			signatureBytes = p384.sign(msgHash, privKeyBytes)
+		} else {
+			return 'Error: Unsupported curve'
+		}
+		
+		// Convert signature to hex
+		return bytesToHex(signatureBytes)
+	} catch (error) {
+		return 'Error: ECDSA signing failed - ' + (error as Error).message
+	}
+}
+
+const ecdsaVerifyTransformation = (text: string, opts: ECDSAVerifyOptions): string => {
+	try {
+		const publicKey = opts.publicKey || ''
+		const signature = opts.signature || ''
+		const curve = opts.curve || 'secp256k1'
+		
+		if (!publicKey.trim()) {
+			return 'Error: Public key is required'
+		}
+		
+		if (!signature.trim()) {
+			return 'Error: Signature is required for verification'
+		}
+		
+		// Convert public key and signature from hex to bytes
+		const pubKeyBytes = hexToBytes(publicKey)
+		const sigBytes = hexToBytes(signature)
+		
+		// Hash the message first
+		const textEncoder = new TextEncoder()
+		const msgBytes = textEncoder.encode(text)
+		const msgHash = sha256(msgBytes)
+		
+		// Verify based on curve
+		let isValid: boolean
+		if (curve === 'secp256k1') {
+			isValid = secp256k1.verify(sigBytes, msgHash, pubKeyBytes)
+		} else if (curve === 'P-256') {
+			isValid = p256.verify(sigBytes, msgHash, pubKeyBytes)
+		} else if (curve === 'P-384') {
+			isValid = p384.verify(sigBytes, msgHash, pubKeyBytes)
+		} else {
+			return 'Error: Unsupported curve'
+		}
+		
+		return isValid ? 'Signature is VALID ✓' : 'Signature is INVALID ✗'
+	} catch (error) {
+		return 'Error: ECDSA verification failed - ' + (error as Error).message
+	}
+}
+
+const rsaKeygenTransformation = (_text: string, opts: RSAKeygenOptions): string => {
+	try {
+		const keySize = opts.keySize || 2048
+		
+		// Generate RSA key pair
+		const keypair = rs.KEYUTIL.generateKeypair('RSA', keySize)
+		// Get PEM format keys (default format for public key should work with Cipher.encrypt)
+		const publicKey = rs.KEYUTIL.getPEM(keypair.pubKeyObj)
+		const privateKey = rs.KEYUTIL.getPEM(keypair.prvKeyObj, 'PKCS8PRV')
+		
+		// Return formatted output with both keys
+		return `PUBLIC KEY:\n${publicKey}\n\nPRIVATE KEY:\n${privateKey}`
+	} catch (error) {
+		return 'Error: RSA key generation failed - ' + (error as Error).message
+	}
+}
+
+const ecdsaKeygenTransformation = (_text: string, opts: ECDSAKeygenOptions): string => {
+	try {
+		const curve = opts.curve || 'secp256k1'
+		
+		// Generate key pair based on curve
+		let privKey: Uint8Array
+		let pubKey: Uint8Array
+		
+		if (curve === 'secp256k1') {
+			privKey = secp256k1.utils.randomSecretKey()
+			pubKey = secp256k1.getPublicKey(privKey)
+		} else if (curve === 'P-256') {
+			privKey = p256.utils.randomSecretKey()
+			pubKey = p256.getPublicKey(privKey)
+		} else if (curve === 'P-384') {
+			privKey = p384.utils.randomSecretKey()
+			pubKey = p384.getPublicKey(privKey)
+		} else {
+			return 'Error: Unsupported curve'
+		}
+		
+		// Convert to hex
+		const privKeyHex = bytesToHex(privKey)
+		const pubKeyHex = bytesToHex(pubKey)
+		
+		return `PRIVATE KEY (hex):\n${privKeyHex}\n\nPUBLIC KEY (hex):\n${pubKeyHex}`
+	} catch (error) {
+		return 'Error: ECDSA key generation failed - ' + (error as Error).message
 	}
 }
