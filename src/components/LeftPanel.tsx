@@ -38,6 +38,9 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
   const [aesDialogOpen, setAesDialogOpen] = useState(false)
   const [urlEncodeDialogOpen, setUrlEncodeDialogOpen] = useState(false)
   const [urlDecodeDialogOpen, setUrlDecodeDialogOpen] = useState(false)
+  const [base32DialogOpen, setBase32DialogOpen] = useState(false)
+  const [base58DialogOpen, setBase58DialogOpen] = useState(false)
+  const [base85DialogOpen, setBase85DialogOpen] = useState(false)
   
   const [caesarForm, setCaesarForm] = useState({
     shift: options[TransformationType.CAESAR].shift
@@ -83,6 +86,19 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
     padding: options[TransformationType.AES].padding,
     iv: options[TransformationType.AES].iv
   })
+  
+  const [base32Form, setBase32Form] = useState({
+    padding: options[TransformationType.BASE32].padding
+  })
+  
+  const [base58Form, setBase58Form] = useState({
+    alphabet: options[TransformationType.BASE58].alphabet
+  })
+  
+  const [base85Form, setBase85Form] = useState({
+    variant: options[TransformationType.BASE85].variant
+  })
+  
   return (
     <div className="w-full md:w-1/2 h-full bg-gray-50 p-6 overflow-y-auto">
       <div className="space-y-6">
@@ -576,6 +592,245 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                             }
                           })
                           setHexDialogOpen(false)
+                          toast.success("Settings saved!")
+                        }}>
+                          Apply Settings
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.BASE32 ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.BASE32)}
+                  >
+                    Base32
+                  </Button>
+                  <Dialog open={base32DialogOpen} onOpenChange={(open) => {
+                    setBase32DialogOpen(open)
+                    if (open) {
+                      setBase32Form({
+                        padding: options[TransformationType.BASE32].padding
+                      })
+                    }
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.BASE32 ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Base32 Settings</DialogTitle>
+                        <DialogDescription>
+                          Configure Base32 encoding options. Base32 uses a 32-character alphabet (RFC 4648).
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="space-y-4">
+                          <div>
+                            <label className="text-sm font-medium">Encoding Options</label>
+                            <div className="space-y-2 mt-2">
+                              <label className="flex items-center space-x-2">
+                                <input 
+                                  type="checkbox" 
+                                  checked={base32Form.padding}
+                                  onChange={(e) => setBase32Form(prev => ({ ...prev, padding: e.target.checked }))}
+                                  className="rounded" 
+                                />
+                                <span className="text-sm">Add padding (=)</span>
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setBase32DialogOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button onClick={() => {
+                          onOptionsChange({
+                            ...options,
+                            [TransformationType.BASE32]: {
+                              padding: base32Form.padding
+                            }
+                          })
+                          setBase32DialogOpen(false)
+                          toast.success("Settings saved!")
+                        }}>
+                          Apply Settings
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.BASE58 ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.BASE58)}
+                  >
+                    Base58
+                  </Button>
+                  <Dialog open={base58DialogOpen} onOpenChange={(open) => {
+                    setBase58DialogOpen(open)
+                    if (open) {
+                      setBase58Form({
+                        alphabet: options[TransformationType.BASE58].alphabet
+                      })
+                    }
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.BASE58 ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Base58 Settings</DialogTitle>
+                        <DialogDescription>
+                          Configure Base58 encoding options. Base58 avoids ambiguous characters (used in Bitcoin).
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="space-y-4">
+                          <div>
+                            <label className="text-sm font-medium">Alphabet Variant</label>
+                            <div className="space-y-2 mt-2">
+                              <label className="flex items-center space-x-2">
+                                <input 
+                                  type="radio" 
+                                  name="base58-alphabet" 
+                                  value="bitcoin" 
+                                  checked={base58Form.alphabet === 'bitcoin'}
+                                  onChange={(e) => setBase58Form(prev => ({ ...prev, alphabet: e.target.value as 'bitcoin' | 'flickr' | 'ripple' }))}
+                                />
+                                <span className="text-sm">Bitcoin (default)</span>
+                              </label>
+                              <label className="flex items-center space-x-2">
+                                <input 
+                                  type="radio" 
+                                  name="base58-alphabet" 
+                                  value="flickr" 
+                                  checked={base58Form.alphabet === 'flickr'}
+                                  onChange={(e) => setBase58Form(prev => ({ ...prev, alphabet: e.target.value as 'bitcoin' | 'flickr' | 'ripple' }))}
+                                />
+                                <span className="text-sm">Flickr</span>
+                              </label>
+                              <label className="flex items-center space-x-2">
+                                <input 
+                                  type="radio" 
+                                  name="base58-alphabet" 
+                                  value="ripple" 
+                                  checked={base58Form.alphabet === 'ripple'}
+                                  onChange={(e) => setBase58Form(prev => ({ ...prev, alphabet: e.target.value as 'bitcoin' | 'flickr' | 'ripple' }))}
+                                />
+                                <span className="text-sm">Ripple</span>
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setBase58DialogOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button onClick={() => {
+                          onOptionsChange({
+                            ...options,
+                            [TransformationType.BASE58]: {
+                              alphabet: base58Form.alphabet
+                            }
+                          })
+                          setBase58DialogOpen(false)
+                          toast.success("Settings saved!")
+                        }}>
+                          Apply Settings
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.BASE85 ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.BASE85)}
+                  >
+                    Base85
+                  </Button>
+                  <Dialog open={base85DialogOpen} onOpenChange={(open) => {
+                    setBase85DialogOpen(open)
+                    if (open) {
+                      setBase85Form({
+                        variant: options[TransformationType.BASE85].variant
+                      })
+                    }
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={selectedTransformation === TransformationType.BASE85 ? "default" : "outline"}
+                        size="icon"
+                      >
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Base85 Settings</DialogTitle>
+                        <DialogDescription>
+                          Configure Base85 encoding options. Base85 is a more compact encoding than Base64.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="space-y-4">
+                          <div>
+                            <label className="text-sm font-medium">Encoding Variant</label>
+                            <div className="space-y-2 mt-2">
+                              <label className="flex items-center space-x-2">
+                                <input 
+                                  type="radio" 
+                                  name="base85-variant" 
+                                  value="ascii85" 
+                                  checked={base85Form.variant === 'ascii85'}
+                                  onChange={(e) => setBase85Form(prev => ({ ...prev, variant: e.target.value as 'ascii85' | 'z85' }))}
+                                />
+                                <span className="text-sm">ASCII85 (Adobe, with &lt;~ ~&gt; delimiters)</span>
+                              </label>
+                              <label className="flex items-center space-x-2">
+                                <input 
+                                  type="radio" 
+                                  name="base85-variant" 
+                                  value="z85" 
+                                  checked={base85Form.variant === 'z85'}
+                                  onChange={(e) => setBase85Form(prev => ({ ...prev, variant: e.target.value as 'ascii85' | 'z85' }))}
+                                />
+                                <span className="text-sm">Z85 (ZeroMQ)</span>
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setBase85DialogOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button onClick={() => {
+                          onOptionsChange({
+                            ...options,
+                            [TransformationType.BASE85]: {
+                              variant: base85Form.variant
+                            }
+                          })
+                          setBase85DialogOpen(false)
                           toast.success("Settings saved!")
                         }}>
                           Apply Settings

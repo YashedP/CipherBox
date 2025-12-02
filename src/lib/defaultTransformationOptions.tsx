@@ -40,4 +40,13 @@ export const defaultTransformationOptions: TransformOptionsMap = {
     },
     [TransformationType.URL_ENCODE]: {},
     [TransformationType.URL_DECODE]: {},
+    [TransformationType.BASE32]: {
+        padding: true
+    },
+    [TransformationType.BASE58]: {
+        alphabet: 'bitcoin'
+    },
+    [TransformationType.BASE85]: {
+        variant: 'ascii85'
+    },
 }

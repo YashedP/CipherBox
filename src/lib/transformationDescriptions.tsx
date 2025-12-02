@@ -12,6 +12,9 @@ export const transformationDescriptions = {
 	[TransformationType.AES]: 'Advanced Encryption Standard (AES) with configurable mode, padding, and IV',
 	[TransformationType.URL_ENCODE]: 'Encode text using URL encoding (percent encoding)',
 	[TransformationType.URL_DECODE]: 'Decode URL-encoded text back to original format',
+	[TransformationType.BASE32]: 'Binary-to-text encoding using 32-character alphabet (RFC 4648)',
+	[TransformationType.BASE58]: 'Binary-to-text encoding avoiding ambiguous characters (used in Bitcoin)',
+	[TransformationType.BASE85]: 'Compact binary-to-text encoding (ASCII85)',
 } as const
 
 // Get transformation description using array index

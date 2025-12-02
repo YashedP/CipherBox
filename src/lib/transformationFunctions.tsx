@@ -1,4 +1,7 @@
 import * as CryptoJS from 'crypto-js'
+import * as base32 from 'hi-base32'
+import bs58 from 'bs58'
+import { encode as base85Encode } from 'base85'
 
 export const TransformationType = {
     NO_TRANSFORMATION: -1,
@@ -12,6 +15,9 @@ export const TransformationType = {
     AES: 7,
     URL_ENCODE: 8,
     URL_DECODE: 9,
+    BASE32: 10,
+    BASE58: 11,
+    BASE85: 12,
 } as const;
 
 export type TransformationType = typeof TransformationType[keyof typeof TransformationType];
@@ -53,6 +59,15 @@ type AESOptions = {
 	padding?: 'Pkcs7' | 'Iso97971' | 'AnsiX923' | 'Iso10126' | 'ZeroPadding' | 'NoPadding',
 	iv?: string
 }
+type Base32Options = {
+	padding?: boolean
+}
+type Base58Options = {
+	alphabet?: 'bitcoin' | 'flickr' | 'ripple'
+}
+type Base85Options = {
+	variant?: 'ascii85' | 'z85'
+}
 
 export type TransformOptionsMap = {
 	[TransformationType.NO_TRANSFORMATION]: NoOptions
@@ -66,6 +81,9 @@ export type TransformOptionsMap = {
 	[TransformationType.AES]: AESOptions
 	[TransformationType.URL_ENCODE]: NoOptions
 	[TransformationType.URL_DECODE]: NoOptions
+	[TransformationType.BASE32]: Base32Options
+	[TransformationType.BASE58]: Base58Options
+	[TransformationType.BASE85]: Base85Options
 }
 
 type TransformOptions<T extends TransformationType> = TransformOptionsMap[T]
@@ -81,6 +99,9 @@ const desFunc = (text: string, opts: DESOptions): string => desTransformation(te
 const aesFunc = (text: string, opts: AESOptions): string => aesTransformation(text, opts)
 const urlEncodeFunc = (text: string, _opts: NoOptions): string => urlEncodeTransformation(text)
 const urlDecodeFunc = (text: string, _opts: NoOptions): string => urlDecodeTransformation(text)
+const base32Func = (text: string, opts: Base32Options): string => base32Transformation(text, opts)
+const base58Func = (text: string, opts: Base58Options): string => base58Transformation(text, opts)
+const base85Func = (text: string, opts: Base85Options): string => base85Transformation(text, opts)
 
 const transformationFunctions = {
 	[TransformationType.NO_TRANSFORMATION]: noTransformation,
@@ -94,6 +115,9 @@ const transformationFunctions = {
 	[TransformationType.AES]: aesFunc,
 	[TransformationType.URL_ENCODE]: urlEncodeFunc,
 	[TransformationType.URL_DECODE]: urlDecodeFunc,
+	[TransformationType.BASE32]: base32Func,
+	[TransformationType.BASE58]: base58Func,
+	[TransformationType.BASE85]: base85Func,
 } as const
 
 export function transformText<T extends TransformationType>(text: string, type: T, options?: TransformOptions<T>): string {
@@ -411,5 +435,44 @@ const urlDecodeTransformation = (text: string): string => {
 		return decodeURIComponent(text)
 	} catch (error) {
 		return 'Error: URL decoding failed - ' + (error as Error).message
+	}
+}
+
+const base32Transformation = (text: string, opts: Base32Options): string => {
+	try {
+		const padding = opts.padding ?? true
+		const encoded = base32.encode(text)
+		return padding ? encoded : encoded.replace(/=/g, '')
+	} catch (error) {
+		return 'Error: Base32 encoding failed - ' + (error as Error).message
+	}
+}
+
+const base58Transformation = (text: string, _opts: Base58Options): string => {
+	try {
+		// Convert string to Uint8Array
+		const encoder = new TextEncoder()
+		const bytes = encoder.encode(text)
+		
+		// bs58 library uses Bitcoin alphabet by default
+		return bs58.encode(bytes)
+	} catch (error) {
+		return 'Error: Base58 encoding failed - ' + (error as Error).message
+	}
+}
+
+const base85Transformation = (text: string, opts: Base85Options): string => {
+	try {
+		const variant = opts.variant ?? 'ascii85'
+		
+		if (variant === 'ascii85') {
+			const encoded = base85Encode(text)
+			return '<~' + encoded + '~>'
+		} else {
+			// z85 variant
+			return base85Encode(text)
+		}
+	} catch (error) {
+		return 'Error: Base85 encoding failed - ' + (error as Error).message
 	}
 }
