@@ -1,6 +1,7 @@
 import * as CryptoJS from 'crypto-js'
 import * as base32 from 'hi-base32'
 import bs58 from 'bs58'
+import baseX from 'base-x'
 import { encode as base85Encode } from 'base85'
 
 export const TransformationType = {
@@ -448,14 +449,30 @@ const base32Transformation = (text: string, opts: Base32Options): string => {
 	}
 }
 
-const base58Transformation = (text: string, _opts: Base58Options): string => {
+const base58Transformation = (text: string, opts: Base58Options): string => {
 	try {
+		const alphabet = opts.alphabet ?? 'bitcoin'
+		
+		// Define different Base58 alphabets
+		const alphabets = {
+			bitcoin: '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz',
+			flickr: '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ',
+			ripple: 'rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz'
+		}
+		
 		// Convert string to Uint8Array
 		const encoder = new TextEncoder()
 		const bytes = encoder.encode(text)
 		
-		// bs58 library uses Bitcoin alphabet by default
-		return bs58.encode(bytes)
+		// Use the selected alphabet
+		if (alphabet === 'bitcoin') {
+			// Use the optimized bs58 library for Bitcoin alphabet
+			return bs58.encode(bytes)
+		} else {
+			// Use base-x for custom alphabets
+			const customBase58 = baseX(alphabets[alphabet])
+			return customBase58.encode(bytes)
+		}
 	} catch (error) {
 		return 'Error: Base58 encoding failed - ' + (error as Error).message
 	}
