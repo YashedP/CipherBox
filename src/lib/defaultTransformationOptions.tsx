@@ -38,6 +38,18 @@ export const defaultTransformationOptions: TransformOptionsMap = {
         padding: 'Pkcs7',
         iv: ''
     },
+    [TransformationType.DES_DECRYPT]: {
+        key: 'default-key',
+        mode: 'ECB',
+        padding: 'Pkcs7',
+        iv: ''
+    },
+    [TransformationType.AES_DECRYPT]: {
+        key: 'default-key',
+        mode: 'ECB',
+        padding: 'Pkcs7',
+        iv: ''
+    },
     [TransformationType.URL_ENCODE]: {},
     [TransformationType.URL_DECODE]: {},
     [TransformationType.BASE32]: {

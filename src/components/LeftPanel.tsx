@@ -53,7 +53,15 @@ const algorithmInfoLinks: Partial<Record<TransformationType, { label: string, ur
     label: 'the DES cipher',
     url: 'https://en.wikipedia.org/wiki/Data_Encryption_Standard'
   },
+  [TransformationType.DES_DECRYPT]: {
+    label: 'the DES cipher',
+    url: 'https://en.wikipedia.org/wiki/Data_Encryption_Standard'
+  },
   [TransformationType.AES]: {
+    label: 'the AES cipher',
+    url: 'https://en.wikipedia.org/wiki/Advanced_Encryption_Standard'
+  },
+  [TransformationType.AES_DECRYPT]: {
     label: 'the AES cipher',
     url: 'https://en.wikipedia.org/wiki/Advanced_Encryption_Standard'
   },
@@ -764,7 +772,7 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                     className="flex-1"
                     onClick={() => onTransformationChange(TransformationType.DES)}
                   >
-                    DES Cipher
+                    DES Encrypt
                   </Button>
                   <Dialog open={desDialogOpen} onOpenChange={(open) => {
                     setDesDialogOpen(open)
@@ -787,9 +795,9 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[600px]">
                       <DialogHeader>
-                        <DialogTitle>DES Cipher Settings</DialogTitle>
+                        <DialogTitle>DES Settings</DialogTitle>
                         <DialogDescription>
-                          Configure the key, mode of operation, padding scheme, and IV for DES encryption.
+                          Configure the key, mode of operation, padding scheme, and IV for DES encryption and decryption.
                         </DialogDescription>
                         <AlgorithmInfoLink type={TransformationType.DES} />
                       </DialogHeader>
@@ -892,14 +900,16 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                             return
                           }
                           
+                          const updatedDes = {
+                            key: desForm.key,
+                            mode: desForm.mode,
+                            padding: desForm.padding,
+                            iv: desForm.iv
+                          }
                           onOptionsChange({
                             ...options,
-                            [TransformationType.DES]: {
-                              key: desForm.key,
-                              mode: desForm.mode,
-                              padding: desForm.padding,
-                              iv: desForm.iv
-                            }
+                            [TransformationType.DES]: updatedDes,
+                            [TransformationType.DES_DECRYPT]: updatedDes
                           })
                           setDesDialogOpen(false)
                           toast.success("Settings saved!")
@@ -912,11 +922,27 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                 </ButtonGroup>
                 <ButtonGroup className="w-full">
                   <Button
+                    variant={selectedTransformation === TransformationType.DES_DECRYPT ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.DES_DECRYPT)}
+                  >
+                    DES Decrypt
+                  </Button>
+                  <Button
+                    variant={selectedTransformation === TransformationType.DES_DECRYPT ? "default" : "outline"}
+                    size="icon"
+                    onClick={() => setDesDialogOpen(true)}
+                  >
+                    <Settings className="h-4 w-4" />
+                  </Button>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
                     variant={selectedTransformation === TransformationType.AES ? "default" : "outline"}
                     className="flex-1"
                     onClick={() => onTransformationChange(TransformationType.AES)}
                   >
-                    AES Cipher
+                    AES Encrypt
                   </Button>
                   <Dialog open={aesDialogOpen} onOpenChange={(open) => {
                     setAesDialogOpen(open)
@@ -939,9 +965,9 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[600px]">
                       <DialogHeader>
-                        <DialogTitle>AES Cipher Settings</DialogTitle>
+                        <DialogTitle>AES Settings</DialogTitle>
                         <DialogDescription>
-                          Configure the key, mode of operation, padding scheme, and IV for AES encryption.
+                          Configure the key, mode of operation, padding scheme, and IV for AES encryption and decryption.
                         </DialogDescription>
                         <AlgorithmInfoLink type={TransformationType.AES} />
                       </DialogHeader>
@@ -1044,14 +1070,16 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                             return
                           }
                           
+                          const updatedAes = {
+                            key: aesForm.key,
+                            mode: aesForm.mode,
+                            padding: aesForm.padding,
+                            iv: aesForm.iv
+                          }
                           onOptionsChange({
                             ...options,
-                            [TransformationType.AES]: {
-                              key: aesForm.key,
-                              mode: aesForm.mode,
-                              padding: aesForm.padding,
-                              iv: aesForm.iv
-                            }
+                            [TransformationType.AES]: updatedAes,
+                            [TransformationType.AES_DECRYPT]: updatedAes
                           })
                           setAesDialogOpen(false)
                           toast.success("Settings saved!")
@@ -1061,6 +1089,22 @@ function LeftPanel({ selectedTransformation, onTransformationChange, options, on
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>
+                </ButtonGroup>
+                <ButtonGroup className="w-full">
+                  <Button
+                    variant={selectedTransformation === TransformationType.AES_DECRYPT ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => onTransformationChange(TransformationType.AES_DECRYPT)}
+                  >
+                    AES Decrypt
+                  </Button>
+                  <Button
+                    variant={selectedTransformation === TransformationType.AES_DECRYPT ? "default" : "outline"}
+                    size="icon"
+                    onClick={() => setAesDialogOpen(true)}
+                  >
+                    <Settings className="h-4 w-4" />
+                  </Button>
                 </ButtonGroup>
                 <ButtonGroup className="w-full">
                   <Button

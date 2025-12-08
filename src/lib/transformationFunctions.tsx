@@ -50,6 +50,8 @@ export const TransformationType = {
     ECDSA_VERIFY: 33,
     RSA_KEYGEN: 34,
     ECDSA_KEYGEN: 35,
+    DES_DECRYPT: 36,
+    AES_DECRYPT: 37,
 } as const;
 
 export type TransformationType = typeof TransformationType[keyof typeof TransformationType];
@@ -152,6 +154,8 @@ export type TransformOptionsMap = {
 	[TransformationType.RC4]: RC4Options
 	[TransformationType.DES]: DESOptions
 	[TransformationType.AES]: AESOptions
+	[TransformationType.DES_DECRYPT]: DESOptions
+	[TransformationType.AES_DECRYPT]: AESOptions
 	[TransformationType.URL_ENCODE]: NoOptions
 	[TransformationType.URL_DECODE]: NoOptions
 	[TransformationType.BASE32]: Base32Options
@@ -193,6 +197,8 @@ const hexFunc = (text: string, opts: HexOptions): string => hexTransformation(te
 const rc4Func = (text: string, opts: RC4Options): string => rc4Transformation(text, opts)
 const desFunc = (text: string, opts: DESOptions): string => desTransformation(text, opts)
 const aesFunc = (text: string, opts: AESOptions): string => aesTransformation(text, opts)
+const desDecryptFunc = (text: string, opts: DESOptions): string => desDecryptTransformation(text, opts)
+const aesDecryptFunc = (text: string, opts: AESOptions): string => aesDecryptTransformation(text, opts)
 const urlEncodeFunc = (text: string, _opts: NoOptions): string => urlEncodeTransformation(text)
 const urlDecodeFunc = (text: string, _opts: NoOptions): string => urlDecodeTransformation(text)
 const base32Func = (text: string, opts: Base32Options): string => base32Transformation(text, opts)
@@ -232,6 +238,8 @@ const transformationFunctions = {
 	[TransformationType.RC4]: rc4Func,
 	[TransformationType.DES]: desFunc,
 	[TransformationType.AES]: aesFunc,
+	[TransformationType.DES_DECRYPT]: desDecryptFunc,
+	[TransformationType.AES_DECRYPT]: aesDecryptFunc,
 	[TransformationType.URL_ENCODE]: urlEncodeFunc,
 	[TransformationType.URL_DECODE]: urlDecodeFunc,
 	[TransformationType.BASE32]: base32Func,
@@ -492,6 +500,73 @@ const desTransformation = (text: string, opts: DESOptions): string => {
 	}
 }
 
+const desDecryptTransformation = (text: string, opts: DESOptions): string => {
+	try {
+		const key = opts.key || 'default-key'
+		const mode = opts.mode || 'ECB'
+		const padding = opts.padding || 'Pkcs7'
+		const iv = opts.iv
+
+		let cryptoMode
+		switch (mode) {
+			case 'ECB':
+				cryptoMode = CryptoJS.mode.ECB
+				break
+			case 'CBC':
+				cryptoMode = CryptoJS.mode.CBC
+				break
+			case 'CFB':
+				cryptoMode = CryptoJS.mode.CFB
+				break
+			case 'OFB':
+				cryptoMode = CryptoJS.mode.OFB
+				break
+			case 'CTR':
+				cryptoMode = CryptoJS.mode.CTR
+				break
+			default:
+				throw new Error('Invalid mode of operation')
+		}
+
+		let cryptoPadding
+		switch (padding) {
+			case 'Pkcs7':
+				cryptoPadding = CryptoJS.pad.Pkcs7
+				break
+			case 'Iso97971':
+				cryptoPadding = CryptoJS.pad.Iso97971
+				break
+			case 'AnsiX923':
+				cryptoPadding = CryptoJS.pad.AnsiX923
+				break
+			case 'Iso10126':
+				cryptoPadding = CryptoJS.pad.Iso10126
+				break
+			case 'ZeroPadding':
+				cryptoPadding = CryptoJS.pad.ZeroPadding
+				break
+			case 'NoPadding':
+				cryptoPadding = CryptoJS.pad.NoPadding
+				break
+			default:
+				throw new Error('Invalid padding scheme')
+		}
+
+		const keyWordArray = CryptoJS.enc.Utf8.parse(key)
+		const ivWordArray = iv ? CryptoJS.enc.Hex.parse(iv) : undefined
+
+		const decrypted = CryptoJS.DES.decrypt(text, keyWordArray, {
+			mode: cryptoMode,
+			padding: cryptoPadding,
+			iv: ivWordArray
+		})
+
+		return CryptoJS.enc.Utf8.stringify(decrypted)
+	} catch (error) {
+		return 'Error: DES decryption failed - ' + (error as Error).message
+	}
+}
+
 const aesTransformation = (text: string, opts: AESOptions): string => {
 	try {
 		const key = opts.key || 'default-key'
@@ -561,6 +636,73 @@ const aesTransformation = (text: string, opts: AESOptions): string => {
 		
 	} catch (error) {
 		return 'Error: AES encryption failed - ' + (error as Error).message
+	}
+}
+
+const aesDecryptTransformation = (text: string, opts: AESOptions): string => {
+	try {
+		const key = opts.key || 'default-key'
+		const mode = opts.mode || 'ECB'
+		const padding = opts.padding || 'Pkcs7'
+		const iv = opts.iv
+
+		let cryptoMode
+		switch (mode) {
+			case 'ECB':
+				cryptoMode = CryptoJS.mode.ECB
+				break
+			case 'CBC':
+				cryptoMode = CryptoJS.mode.CBC
+				break
+			case 'CFB':
+				cryptoMode = CryptoJS.mode.CFB
+				break
+			case 'OFB':
+				cryptoMode = CryptoJS.mode.OFB
+				break
+			case 'CTR':
+				cryptoMode = CryptoJS.mode.CTR
+				break
+			default:
+				throw new Error('Invalid mode of operation')
+		}
+
+		let cryptoPadding
+		switch (padding) {
+			case 'Pkcs7':
+				cryptoPadding = CryptoJS.pad.Pkcs7
+				break
+			case 'Iso97971':
+				cryptoPadding = CryptoJS.pad.Iso97971
+				break
+			case 'AnsiX923':
+				cryptoPadding = CryptoJS.pad.AnsiX923
+				break
+			case 'Iso10126':
+				cryptoPadding = CryptoJS.pad.Iso10126
+				break
+			case 'ZeroPadding':
+				cryptoPadding = CryptoJS.pad.ZeroPadding
+				break
+			case 'NoPadding':
+				cryptoPadding = CryptoJS.pad.NoPadding
+				break
+			default:
+				throw new Error('Invalid padding scheme')
+		}
+
+		const keyWordArray = CryptoJS.enc.Utf8.parse(key)
+		const ivWordArray = iv ? CryptoJS.enc.Hex.parse(iv) : undefined
+
+		const decrypted = CryptoJS.AES.decrypt(text, keyWordArray, {
+			mode: cryptoMode,
+			padding: cryptoPadding,
+			iv: ivWordArray
+		})
+
+		return CryptoJS.enc.Utf8.stringify(decrypted)
+	} catch (error) {
+		return 'Error: AES decryption failed - ' + (error as Error).message
 	}
 }
 
