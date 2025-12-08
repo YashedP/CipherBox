@@ -78,7 +78,7 @@ export default defineConfig([
 
 ### Personal Notes
 
-we used Bun instead of npm since We've heard many great things about it
+We used Bun instead of npm since We've heard many great things about it
 
 Using Vite for the first time since this was the recommendation that We was given
 
