@@ -78,12 +78,11 @@ export default defineConfig([
 
 ### Personal Notes
 
-I used bun instead of npm since i've heard many great things about it
+we used Bun instead of npm since We've heard many great things about it
 
-Using Vite for the first time since this was the recommendation that I was given
+Using Vite for the first time since this was the recommendation that We was given
 
 Installed things manually
 - tailwindcss
 - shadcn
 - shadcn MCP server for cursor
-
